@@ -46,38 +46,66 @@ function runMigrations(): void {
         const migrationPath = join(__dirname, '../../migrations/init.sql');
         const migrationSQL = readFileSync(migrationPath, 'utf-8');
         
-        // Split by semicolon and execute each statement
-        const statements = migrationSQL
-            .split(';')
-            .map(stmt => stmt.trim())
-            .filter(stmt => stmt.length > 0 && !stmt.startsWith('--'));
-        
-        db.transaction(() => {
-            for (const statement of statements) {
-                try {
-                    db.exec(statement);
-                } catch (error) {
-                    console.warn('Migration statement failed (may be expected):', statement.substring(0, 50) + '...');
-                }
-            }
-        })();
+        // Execute the entire migration as one statement
+        db.exec(migrationSQL);
         
         console.log('Database migrations completed successfully');
+        
+        // Create ultimate admin from environment variables
+        createUltimateAdminFromEnv();
+        
     } catch (error) {
         console.error('Failed to run migrations:', error);
         throw error;
     }
 }
 
+async function createUltimateAdminFromEnv(): Promise<void> {
+    try {
+        const ultimateUsername = process.env.ULTIMATE_ADMIN_USERNAME;
+        const ultimatePassword = process.env.ULTIMATE_ADMIN_PASSWORD;
+        const ultimateName = process.env.ULTIMATE_ADMIN_NAME || 'Ultimate Administrator';
+        const ultimateEmail = process.env.ULTIMATE_ADMIN_EMAIL || 'ultimate@fomento.com';
+        
+        if (!ultimateUsername || !ultimatePassword) {
+            console.log('Ultimate admin credentials not provided in environment variables');
+            return;
+        }
+        
+        // Check if ultimate admin already exists
+        const existingUltimate = dbUtils.getUserByUsername(ultimateUsername);
+        if (existingUltimate) {
+            console.log('Ultimate admin already exists, skipping creation');
+            return;
+        }
+        
+        // Import bcrypt dynamically to avoid issues during initialization
+        const bcrypt = await import('bcryptjs');
+        const hashedPassword = await bcrypt.hash(ultimatePassword, 12);
+        
+        // Create ultimate admin
+        const stmt = db.prepare(`
+            INSERT INTO Users (username, password, name, email, type) 
+            VALUES (?, ?, ?, ?, 'ultimate_admin')
+        `);
+        
+        stmt.run(ultimateUsername, hashedPassword, ultimateName, ultimateEmail);
+        console.log(`✅ Ultimate admin created from environment: ${ultimateUsername}`);
+        
+    } catch (error) {
+        console.error('Failed to create ultimate admin from environment:', error);
+    }
+}
+
 // Database utility functions
 export const dbUtils = {
-    // User operations
-    createUser: (username: string, hashedPassword: string, name: string, email: string): DatabaseResult => {
+    // User operations (unified for all user types)
+    createUser: (username: string, hashedPassword: string, name: string, email: string, type: 'user' | 'admin' | 'ultimate_admin' = 'user'): DatabaseResult => {
         const stmt = db.prepare(`
-            INSERT INTO Users (username, password, name, email) 
-            VALUES (?, ?, ?, ?)
+            INSERT INTO Users (username, password, name, email, type) 
+            VALUES (?, ?, ?, ?, ?)
         `);
-        return stmt.run(username, hashedPassword, name, email) as DatabaseResult;
+        return stmt.run(username, hashedPassword, name, email, type) as DatabaseResult;
     },
     
     getUserByUsername: (username: string): User | undefined => {
@@ -96,29 +124,31 @@ export const dbUtils = {
         return stmt.get(id) as User | undefined;
     },
     
-    // Admin operations
-    createAdmin: (username: string, hashedPassword: string, name: string, email: string): DatabaseResult => {
+    // Get users by type
+    getUsersByType: (type: 'user' | 'admin' | 'ultimate_admin'): User[] => {
         const stmt = db.prepare(`
-            INSERT INTO Admins (username, password, name, email) 
-            VALUES (?, ?, ?, ?)
+            SELECT * FROM Users 
+            WHERE type = ? AND is_active = 1
+            ORDER BY created_at DESC
         `);
-        return stmt.run(username, hashedPassword, name, email) as DatabaseResult;
+        return stmt.all(type) as User[];
     },
     
-    getAdminByUsername: (username: string): Admin | undefined => {
+    // Legacy admin functions (for backward compatibility)
+    getAdminByUsername: (username: string): User | undefined => {
         const stmt = db.prepare(`
-            SELECT * FROM Admins 
-            WHERE username = ?
+            SELECT * FROM Users 
+            WHERE username = ? AND type IN ('admin', 'ultimate_admin') AND is_active = 1
         `);
-        return stmt.get(username) as Admin | undefined;
+        return stmt.get(username) as User | undefined;
     },
     
-    getAdminById: (id: number): Admin | undefined => {
+    getAdminById: (id: number): User | undefined => {
         const stmt = db.prepare(`
-            SELECT * FROM Admins 
-            WHERE id = ?
+            SELECT * FROM Users 
+            WHERE id = ? AND type IN ('admin', 'ultimate_admin') AND is_active = 1
         `);
-        return stmt.get(id) as Admin | undefined;
+        return stmt.get(id) as User | undefined;
     },
     
     // Training operations
@@ -132,9 +162,9 @@ export const dbUtils = {
     
     getTrainings: (): TrainingInfo[] => {
         const stmt = db.prepare(`
-            SELECT t.*, a.name as admin_name 
+            SELECT t.*, u.name as creator_name 
             FROM TrainingInfo t 
-            JOIN Admins a ON t.created_by = a.id 
+            JOIN Users u ON t.created_by = u.id 
             ORDER BY t.created_at DESC
         `);
         return stmt.all() as TrainingInfo[];
@@ -142,9 +172,9 @@ export const dbUtils = {
     
     getTrainingById: (id: number): TrainingInfo | undefined => {
         const stmt = db.prepare(`
-            SELECT t.*, a.name as admin_name 
+            SELECT t.*, u.name as creator_name 
             FROM TrainingInfo t 
-            JOIN Admins a ON t.created_by = a.id 
+            JOIN Users u ON t.created_by = u.id 
             WHERE t.id = ?
         `);
         return stmt.get(id) as TrainingInfo | undefined;
@@ -208,6 +238,11 @@ export const dbUtils = {
             WHERE id = ?
         `);
         return stmt.run(status, id) as DatabaseResult;
+    },
+    
+    // Get database instance for custom queries
+    getDatabase: () => {
+        return db;
     }
 };
 

@@ -37,3 +37,7 @@ yarn-error.log*
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+cookies.txt
+data.db-shm
+data.db-wal

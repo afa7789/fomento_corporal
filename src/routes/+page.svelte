@@ -1,25 +1,61 @@
-<nav class="nav">
-  <a href="/login">LOGIN</a>
-  <a href="/admin">ADMIN</a>
-  <a href="/user">USER</a>
-</nav>
+<div class="home-container">
+  <h1>FOMENTO CORPORAL</h1>
 
-<h1>FOMENTO CORPORAL</h1>
-
-<p>Sistema de gestão de treinamentos e usuários</p>
-
-<div class="card">
-  <h3>FEATURES</h3>
-  <ul>
-    <li>Gestão de usuários e administradores</li>
-    <li>Upload e controle de acesso a arquivos de treinamento</li>
-    <li>Sistema de pagamentos</li>
-    <li>Interface responsiva e mobile-first</li>
-  </ul>
+  <a href="/login" class="login-button">ENTRAR</a>
 </div>
 
-<div class="card">
-  <h3>NAVIGATION</h3>
-  <button on:click={() => window.location.href = '/login'}>ENTRAR</button>
-  <button on:click={() => window.location.href = '/admin'}>ÁREA ADMIN</button>
-</div>
+<style>
+  .home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  
+  .login-button {
+    display: inline-block;
+    padding: 15px 30px;
+    background: #000;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 1.2rem;
+    border: none;
+    cursor: pointer;
+    max-width:  50vw;
+    min-width: 200px;
+  }
+  
+  .login-button:hover {
+    background: #fff;
+    color: #000;
+    border: 3px solid #000;
+    max-width:  50vw;
+    min-width: 200px;
+  }
+  
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
+    }
+    
+    .login-card {
+      padding: 20px;
+      width: 100%;
+      max-width: 300px;
+    }
+  }
+</style>

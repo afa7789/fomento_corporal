@@ -1,0 +1,228 @@
+/* LOGIN PAGE SPECIFIC STYLES - MOBILE FIRST */
+
+/* Container for login page */
+.login-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Navigation */
+.login-nav {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1000;
+}
+
+.login-nav a {
+  font-size: 14px;
+  text-decoration: none;
+  background: #ffffff;
+  border: 2px solid #000000;
+  padding: 8px 12px;
+  color: #000000;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.login-nav a:hover {
+  background: #000000;
+  color: #ffffff;
+}
+
+/* Login title */
+.login-title {
+  text-align: center;
+  font-size: 24px;
+  margin: 40px 0 30px 0;
+  border-bottom: 4px solid #000000;
+  padding-bottom: 8px;
+}
+
+/* Login card */
+.login-card {
+  border: 3px solid #000000;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: #ffffff;
+}
+
+/* Form styling */
+.login-form {
+  width: 100%;
+}
+
+.login-form-group {
+  margin-bottom: 20px;
+}
+
+.login-form-group label {
+  display: block;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.login-form-group input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 3px solid #000000;
+  background: #ffffff;
+  color: #000000;
+  font-family: 'Courier New', monospace;
+}
+
+.login-form-group input:focus {
+  outline: none;
+  border-width: 4px;
+  background: #f9f9f9;
+}
+
+.login-form-group input::placeholder {
+  color: #666666;
+  font-style: italic;
+}
+
+/* Login button */
+.login-button {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: #000000;
+  color: #ffffff;
+  border: 3px solid #000000;
+  cursor: pointer;
+  letter-spacing: 1px;
+  font-family: 'Courier New', monospace;
+  margin-top: 10px;
+}
+
+.login-button:hover {
+  background: #ffffff;
+  color: #000000;
+}
+
+.login-button:active {
+  background: #cccccc;
+  color: #000000;
+}
+
+/* Status messages */
+.login-error {
+  background: #ffe6e6;
+  border: 3px solid #ff0000;
+  color: #cc0000;
+  padding: 12px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.login-success {
+  background: #e6ffe6;
+  border: 3px solid #00aa00;
+  color: #006600;
+  padding: 12px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+/* Info card */
+.login-info {
+  border: 3px solid #000000;
+  padding: 15px;
+  margin-top: 20px;
+  background: #f9f9f9;
+}
+
+.login-info h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border-bottom: 2px solid #000000;
+  padding-bottom: 5px;
+}
+
+.login-info p {
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Responsive design for larger screens */
+@media (min-width: 768px) {
+  .login-container {
+    max-width: 450px;
+    padding: 40px;
+  }
+  
+  .login-title {
+    font-size: 28px;
+    margin: 50px 0 40px 0;
+  }
+  
+  .login-card {
+    padding: 30px;
+  }
+  
+  .login-form-group {
+    margin-bottom: 25px;
+  }
+  
+  .login-button {
+    padding: 18px;
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .login-container {
+    max-width: 500px;
+  }
+  
+  .login-title {
+    font-size: 32px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .login-form-group input {
+    border-width: 4px;
+  }
+  
+  .login-button {
+    border-width: 4px;
+  }
+  
+  .login-card {
+    border-width: 4px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .login-button {
+    transition: none;
+  }
+  
+  .login-nav a {
+    transition: none;
+  }
+}

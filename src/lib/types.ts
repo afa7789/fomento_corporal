@@ -1,16 +1,20 @@
 // Database types for better TypeScript support
 
+export type UserType = 'user' | 'admin' | 'ultimate_admin';
+
 export interface User {
     id: number;
     username: string;
     password: string;
     name: string;
     email: string;
+    type: UserType;
     is_active: boolean;
     created_at: string;
     updated_at: string;
 }
 
+// Keep Admin interface for backward compatibility (will be removed gradually)
 export interface Admin {
     id: number;
     username: string;
@@ -33,7 +37,7 @@ export interface TrainingInfo {
     created_by: number;
     created_at: string;
     updated_at: string;
-    admin_name?: string; // From JOIN queries
+    creator_name?: string; // From JOIN queries (updated from admin_name)
 }
 
 export interface FileAccess {
