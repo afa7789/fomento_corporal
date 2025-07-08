@@ -26,13 +26,6 @@
         <div class="success">{form.success}</div>
     {/if}
     
-    {#if user}
-        <div class="welcome-card">
-            <h2>BEM-VINDO, {user.name?.toUpperCase() || 'ULTIMATE ADMIN'}</h2>
-            <p>Tipo: <strong>ULTIMATE ADMINISTRATOR</strong></p>
-        </div>
-    {/if}
-    
     {#if !authenticated}
         <div class="card">
             <h3>ACESSO RESTRITO</h3>
@@ -105,18 +98,7 @@
                     />
                 </div>
                 
-                <div class="form-group">
-                    <label for="user_type">TIPO DE USUÁRIO:</label>
-                    <select 
-                        id="user_type" 
-                        name="user_type" 
-                        required
-                    >
-                        <option value="admin">ADMIN</option>
-                        <option value="ultimate_admin">ULTIMATE ADMIN</option>
-                    </select>
-                </div>
-                
+                <input type="hidden" name="user_type" value="admin" />
                 <button type="submit">CRIAR USUÁRIO</button>
             </form>
         </div>

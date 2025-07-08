@@ -145,8 +145,12 @@ export const actions: Actions = {
             // Update password (we'll implement this method)
             // For now, we'll need to add this to dbUtils
             const db = dbUtils.getDatabase();
-            const stmt = db.prepare('UPDATE Admins SET password = ? WHERE username = ?');
-            stmt.run(hashedPassword, reset_username);
+            // Atualiza senha apenas para usuários do tipo admin
+            const stmt = db.prepare("UPDATE Users SET password = ? WHERE username = ? AND type = 'admin'");
+            const result = stmt.run(hashedPassword, reset_username);
+            if (result.changes === 0) {
+                throw new Error('Admin não encontrado ou não é do tipo admin.');
+            }
             
             console.log(`Admin password reset via ultimate mode: ${reset_username}`);
             
