@@ -20,6 +20,16 @@ CREATE TABLE IF NOT EXISTS Users (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- pix payment config table
+CREATE TABLE IF NOT EXISTS pix_payment_config (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    pix_key VARCHAR(100) NOT NULL,
+    beneficiary_name VARCHAR(25) NOT NULL,
+    beneficiary_city VARCHAR(15) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
 -- Groups table
 CREATE TABLE IF NOT EXISTS Groups (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -12,6 +12,7 @@
         <a href="/admin/groups">Listar Grupos</a>
         <a href="/admin/admins">Listar Admins</a>
         <a href="/admin/payments">Pagamentos</a>
+        <a href="/admin/payment-config">Configuração Pix</a>
     </nav>
     <form method="POST" action="/logout" class="logout-form" style="margin-top:2rem;">
         <button type="submit" class="logout-btn">SAIR</button>
