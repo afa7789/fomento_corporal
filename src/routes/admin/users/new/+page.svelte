@@ -1,7 +1,6 @@
 <script>
   export let data;
 </script>
-
 <div class="admin-dashboard">
   <h1>Novo Usuário</h1>
   <a href="/admin/users" class="back-btn">← Voltar à lista de usuários</a>

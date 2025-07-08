@@ -154,6 +154,33 @@
   font-size: 0.95em;
   margin-top: 0.2em;
 }
+.disable-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+.disable-btn:hover {
+  background: #c82333;
+}
+.enable-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  margin-left: 0.5rem;
+}
+.enable-btn:hover {
+  background: #218838;
+}
 @media (max-width: 600px) {
   .admin-dashboard {
     padding: 8px;
