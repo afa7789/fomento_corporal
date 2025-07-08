@@ -1,5 +1,3 @@
-
-
 <script lang="ts">
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
@@ -9,9 +7,17 @@
   export let form: ActionData | undefined;
   const training = data.training;
   let name: string = training?.name || '';
-  let fileInput: HTMLInputElement | null = null;
+  let fileContent: string = '';
   let submitting = false;
   let feedbackTimeout: NodeJS.Timeout | null = null;
+  // SSR data
+  const groups = data.groups || [];
+  const users = data.users || [];
+  const access = data.access || [];
+  // Helpers for checked state
+  const accessEveryone = access.some(a => a.access_type === 'everyone');
+  const accessGroups = access.filter(a => a.access_type === 'group').map(a => a.target_id);
+  const accessUsers = access.filter(a => a.access_type === 'user').map(a => a.target_id);
 
   // Auto-clear feedback after 3s
   $: if (form?.success || form?.error) {
@@ -30,13 +36,14 @@
 
 <div class="admin-dashboard">
   <h1>{training ? 'Editar Treinamento' : 'Novo Treinamento'}</h1>
+  <a href="/admin" class="back-btn">← Voltar ao dashboard</a>
   {#if form?.success}
     <div class="success" role="status">{form.success}</div>
   {/if}
   {#if form?.error}
     <div class="error" role="alert">{form.error}</div>
   {/if}
-  <form method="POST" enctype="multipart/form-data" on:submit|preventDefault={async (e) => {
+  <form method="POST" on:submit|preventDefault={async (e) => {
     submitting = true;
     const formData = new FormData(e.target as HTMLFormElement);
     // Use fetch to submit form for better feedback
@@ -51,13 +58,34 @@
       <input type="text" name="name" required bind:value={name} autocomplete="off" maxlength="100" />
     </label>
     <br/><br/>
-    <label>Arquivo:<br/>
-      <input type="file" name="file" bind:this={fileInput} accept="application/pdf,video/*,image/*" />
-      {#if training}
-        <small>Deixe em branco para não alterar</small>
-      {/if}
+    <label>Conteúdo do arquivo:<br/>
+      <textarea name="file_content" rows="10" placeholder="Cole aqui o conteúdo do arquivo" style="font-family:monospace; width:100%; resize:vertical;">{fileContent}</textarea>
     </label>
     <br/><br/>
+    <fieldset style="border:1px solid #ccc; border-radius:6px; padding:1rem;">
+      <legend>Compartilhamento</legend>
+      <label style="display:block; margin-bottom:0.5rem;">
+        <input type="checkbox" name="everyone" value="1" checked={accessEveryone} /> Acessível a todos
+      </label>
+      <label style="display:block; margin-bottom:0.5rem;">
+        Grupos:<br/>
+        <div class="checkbox-list">
+          {#each groups as group}
+            <label><input type="checkbox" name="groups" value={group.id} checked={accessGroups.includes(group.id)}> {group.name}</label>
+          {/each}
+        </div>
+      </label>
+      <label style="display:block; margin-bottom:0.5rem;">
+        Usuários:<br/>
+        <div class="checkbox-list">
+          {#each users as user}
+            <label><input type="checkbox" name="users" value={user.id} checked={accessUsers.includes(user.id)}> {user.name} ({user.username})</label>
+          {/each}
+        </div>
+      </label>
+      <small>Você pode combinar grupos, usuários e o acesso geral.</small>
+    </fieldset>
+    <br/>
     <button type="submit" disabled={submitting}>{submitting ? 'Salvando...' : 'Salvar'}</button>
   </form>
 </div>
@@ -124,6 +152,38 @@ button[type="submit"] {
 button[disabled] {
   background: #aaa;
   cursor: not-allowed;
+}
+.checkbox-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+}
+.checkbox-list label {
+  display: flex;
+  align-items: center;
+  font-weight: normal;
+  margin-right: 1rem;
+  margin-bottom: 0.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.back-btn {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: #207520;
+  background: #e6ffe6;
+  border: 1px solid #b2e5b2;
+  border-radius: 6px;
+  padding: 0.4rem 1.2rem;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background 0.2s, color 0.2s;
+}
+.back-btn:hover {
+  background: #207520;
+  color: #fff;
 }
 @media (max-width: 600px) {
   .admin-dashboard {

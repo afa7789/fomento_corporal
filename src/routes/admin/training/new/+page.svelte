@@ -1,42 +1,89 @@
 <script>
   export let form;
+  export let groups = [];
+  export let users = [];
 </script>
 
 <div class="admin-dashboard">
   <h1>Novo Treinamento</h1>
+  <a href="/admin" class="back-btn">← Voltar ao dashboard</a>
   {#if form?.success}
     <div class="success">{form.success}</div>
   {/if}
   {#if form?.error}
     <div class="error">{form.error}</div>
   {/if}
-  <form method="POST" enctype="multipart/form-data">
+  <form method="POST">
     <label>Nome do treinamento:<br/>
       <input type="text" name="name" required />
     </label>
     <br/><br/>
-    <label>Arquivo:<br/>
-      <input type="file" name="file" required />
+    <label>Conteúdo do arquivo:<br/>
+      <textarea name="file_content" rows="10" placeholder="Cole aqui o conteúdo do arquivo" style="font-family:monospace; width:100%; resize:vertical;" required></textarea>
     </label>
     <br/><br/>
-    <label>Acesso:<br/>
-      <select name="access_type">
-        <option value="everyone">Todos</option>
-        <option value="group">Grupo</option>
-        <option value="user">Usuário</option>
-      </select>
-    </label>
-    <br/><br/>
-    <label>Conteúdo avançado (JSON, TOML, YAML, etc):<br/>
-      <textarea name="advanced_content" rows="10" placeholder="Cole aqui seu conteúdo .json, .toml, .yaml, etc" style="font-family:monospace; width:100%; resize:vertical;"></textarea>
-      <small>Suporta sintaxes como JSON, TOML, YAML, Markdown, etc.</small>
-    </label>
-    <br/><br/>
+    <fieldset style="border:1px solid #ccc; border-radius:6px; padding:1rem;">
+      <legend>Compartilhamento</legend>
+      <label style="display:block; margin-bottom:0.5rem;">
+        <input type="checkbox" name="everyone" value="1" /> Acessível a todos
+      </label>
+      <label style="display:block; margin-bottom:0.5rem;">
+        Grupos:<br/>
+        <div class="checkbox-list">
+          {#each groups as group}
+            <label><input type="checkbox" name="groups" value={group.id}> {group.name}</label>
+          {/each}
+        </div>
+      </label>
+      <label style="display:block; margin-bottom:0.5rem;">
+        Usuários:<br/>
+        <div class="checkbox-list">
+          {#each users as user}
+            <label><input type="checkbox" name="users" value={user.id}> {user.name} ({user.username})</label>
+          {/each}
+        </div>
+      </label>
+
+      <small>Você pode combinar grupos, usuários e o acesso geral.</small>
+    </fieldset>
+    <br/>
     <button type="submit">Salvar</button>
   </form>
 </div>
 
 <style>
+.back-btn {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: #207520;
+  background: #e6ffe6;
+  border: 1px solid #b2e5b2;
+  border-radius: 6px;
+  padding: 0.4rem 1.2rem;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background 0.2s, color 0.2s;
+}
+.back-btn:hover {
+  background: #207520;
+  color: #fff;
+}
+.checkbox-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+}
+.checkbox-list label {
+  display: flex;
+  align-items: center;
+  font-weight: normal;
+  margin-right: 1rem;
+  margin-bottom: 0.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
 .admin-dashboard {
   max-width: 480px;
   margin: 32px auto;

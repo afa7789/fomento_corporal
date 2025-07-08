@@ -1,3 +1,8 @@
+// File access for a training (helper for edit page)
+function getFileAccessByTraining(trainingId: number): FileAccess[] {
+    const stmt = db.prepare('SELECT * FROM FileAccess WHERE training_id = ?');
+    return stmt.all(trainingId) as FileAccess[];
+}
 // Soft-disable/enable user
 function setUserActive(id: number, isActive: boolean): void {
     const stmt = db.prepare('UPDATE Users SET is_active = ? WHERE id = ?');
@@ -116,9 +121,21 @@ async function createUltimateAdminFromEnv(): Promise<void> {
 export const dbUtils = {
     // Group operations
     setUserActive,
-    getAllGroups: (): Group[] => {
+    getFileAccessByTraining,
+    getAllGroups: (): (Group & { users: User[] })[] => {
+        // Get all groups
         const stmt = db.prepare('SELECT * FROM Groups ORDER BY name ASC');
-        return stmt.all() as Group[];
+        const groups = stmt.all() as Group[];
+        // For each group, get its users (apenas não-admins)
+        const userStmt = db.prepare(`
+            SELECT u.* FROM Users u
+            JOIN UserGroups ug ON u.id = ug.user_id
+            WHERE ug.group_id = ? AND u.type = 'user'
+        `);
+        return groups.map(group => ({
+            ...group,
+            users: userStmt.all(group.id) as User[]
+        }));
     },
     getUserGroups: (userId: number): Group[] => {
         const stmt = db.prepare(`

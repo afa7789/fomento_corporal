@@ -6,11 +6,8 @@ export const load: PageServerLoad = async ({ url, locals }): Promise<{ users: an
     throw redirect(302, '/login');
   }
   const search = url.searchParams.get('search')?.toLowerCase() || '';
-  let users = [
-    ...dbUtils.getUsersByType('user'),
-    ...dbUtils.getUsersByType('admin'),
-    ...dbUtils.getUsersByType('ultimate_admin')
-  ];
+  // Mostra apenas usuários comuns
+  let users = dbUtils.getUsersByType('user');
   if (search) {
     users = users.filter(u =>
       u.name.toLowerCase().includes(search) ||

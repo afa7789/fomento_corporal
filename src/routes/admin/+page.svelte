@@ -9,6 +9,7 @@
         <a href="/admin/training/new">Novo Treinamento</a>
         <a href="/admin/trainings">Listar Treinamentos</a>
         <a href="/admin/users">Listar Usuários</a>
+        <a href="/admin/groups">Listar Grupos</a>
         <a href="/admin/admins">Listar Admins</a>
         <a href="/admin/payments">Pagamentos</a>
     </nav>

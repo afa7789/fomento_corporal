@@ -6,6 +6,7 @@
 
 <div class="admin-dashboard">
   <h1>Lista de Usuários</h1>
+  <a href="/admin" class="back-btn">← Voltar ao dashboard</a>
   <form method="GET" class="search-form">
     <input type="text" name="search" placeholder="Buscar usuário, email ou nome..." bind:value={search} />
     <button type="submit">Buscar</button>
@@ -43,6 +44,23 @@
   margin-bottom: 2rem;
   text-transform: uppercase;
   letter-spacing: 1px;
+}
+.back-btn {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: #207520;
+  background: #e6ffe6;
+  border: 1px solid #b2e5b2;
+  border-radius: 6px;
+  padding: 0.4rem 1.2rem;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background 0.2s, color 0.2s;
+}
+.back-btn:hover {
+  background: #207520;
+  color: #fff;
 }
 .search-form {
   display: flex;

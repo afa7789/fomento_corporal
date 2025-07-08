@@ -2,11 +2,13 @@ import { dbUtils } from '$lib/db.js';
 import { redirect, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ params }): Promise<{ training: import('$lib/types').TrainingInfo | null }> => {
+export const load: PageServerLoad = async ({ params }) => {
   const id = Number(params.id);
   const training = dbUtils.getTrainingById(id);
-  if (!training) return { training: null };
-  return { training };
+  const groups = dbUtils.getAllGroups();
+  const users = dbUtils.getUsersByType('user');
+  const access = dbUtils.getFileAccessByTraining(id);
+  return { training, groups, users, access };
 };
 
 export const actions: Actions = {
