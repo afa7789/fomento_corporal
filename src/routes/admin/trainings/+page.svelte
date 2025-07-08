@@ -1,0 +1,122 @@
+<script>
+  export let data;
+  const trainings = data.trainings || [];
+  let search = data.search || '';
+</script>
+
+<div class="admin-dashboard">
+  <h1>Lista de Treinamentos</h1>
+  <form method="GET" class="search-form">
+    <input type="text" name="search" placeholder="Buscar por nome..." bind:value={search} />
+    <button type="submit">Buscar</button>
+  </form>
+  {#if trainings.length === 0}
+    <p>Nenhum treinamento cadastrado.</p>
+  {:else}
+    <ul class="training-list">
+      {#each trainings as t}
+        <li class="training-item">
+          <div><strong>{t.name}</strong></div>
+          <div class="training-info">Arquivo: {t.file_path}</div>
+          <div class="training-info">Criado por: {t.creator_name}</div>
+          <div class="training-actions">
+            <a href="/admin/trainings/{t.id}/edit" class="edit-btn">Editar</a>
+            <form method="POST" action="/admin/trainings/{t.id}/delete" style="display:inline;">
+              <button type="submit" class="delete-btn">Excluir</button>
+            </form>
+          </div>
+        </li>
+      {/each}
+    </ul>
+  {/if}
+</div>
+
+<style>
+.admin-dashboard {
+  max-width: 480px;
+  margin: 32px auto;
+  padding: 16px;
+  background: #fff;
+  border-radius: 12px;
+  text-align: center;
+}
+.admin-dashboard h1 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.training-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.training-item {
+  background: #f7f7f7;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  text-align: left;
+  font-size: 1rem;
+}
+.training-info {
+  color: #555;
+  font-size: 0.95em;
+  margin-top: 0.2em;
+}
+.training-actions {
+  margin-top: 0.7em;
+}
+.edit-btn {
+  background: #0066cc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4em 1em;
+  margin-right: 0.5em;
+  text-decoration: none;
+  font-size: 0.98em;
+}
+.delete-btn {
+  background: #a00;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4em 1em;
+  font-size: 0.98em;
+  cursor: pointer;
+}
+.delete-btn:hover {
+  background: #d00;
+}
+.search-form {
+  display: flex;
+  gap: 0.5em;
+  margin-bottom: 1.2em;
+}
+.search-form input {
+  flex: 1;
+  padding: 0.5em;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+}
+.search-form button {
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  border: none;
+  background: #0066cc;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+}
+.search-form button:hover {
+  background: #004080;
+}
+@media (max-width: 600px) {
+  .admin-dashboard {
+    padding: 8px;
+    max-width: 98vw;
+  }
+}
+</style>

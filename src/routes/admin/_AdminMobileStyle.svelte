@@ -1,22 +1,3 @@
-<script>
-    import { page } from '$app/stores';
-    $: user = $page.data.user;
-</script>
-
-<div class="admin-dashboard">
-    <h1>PAINEL ADMINISTRADOR</h1>
-    <nav class="admin-nav">
-        <a href="/admin/training/new">Novo Treinamento</a>
-        <a href="/admin/trainings">Listar Treinamentos</a>
-        <a href="/admin/users">Listar Usuários</a>
-        <a href="/admin/admins">Listar Admins</a>
-        <a href="/admin/payments">Pagamentos</a>
-    </nav>
-    <form method="POST" action="/logout" class="logout-form" style="margin-top:2rem;">
-        <button type="submit" class="logout-btn">SAIR</button>
-    </form>
-</div>
-
 <style>
 .admin-dashboard {
   max-width: 480px;

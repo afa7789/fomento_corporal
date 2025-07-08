@@ -1,8 +1,23 @@
+// Soft-disable/enable user
+function setUserActive(id: number, isActive: boolean): void {
+    const stmt = db.prepare('UPDATE Users SET is_active = ? WHERE id = ?');
+    stmt.run(isActive ? 1 : 0, id);
+}
+
+function updatePayment(id: number, amount: number, status: string, date: string): void {
+    const stmt = db.prepare(`UPDATE Payments SET amount = ?, status = ?, date = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`);
+    stmt.run(amount, status, date, id);
+}
+
+function deletePayment(id: number): void {
+    const stmt = db.prepare('DELETE FROM Payments WHERE id = ?');
+    stmt.run(id);
+}
 import Database from 'better-sqlite3';
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import type { User, Admin, TrainingInfo, FileAccess, Payment, DatabaseResult } from './types.js';
+import type { User, Admin, TrainingInfo, FileAccess, Payment, DatabaseResult, Group } from './types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -99,6 +114,31 @@ async function createUltimateAdminFromEnv(): Promise<void> {
 
 // Database utility functions
 export const dbUtils = {
+    // Group operations
+    setUserActive,
+    getAllGroups: (): Group[] => {
+        const stmt = db.prepare('SELECT * FROM Groups ORDER BY name ASC');
+        return stmt.all() as Group[];
+    },
+    getUserGroups: (userId: number): Group[] => {
+        const stmt = db.prepare(`
+            SELECT g.* FROM Groups g
+            JOIN UserGroups ug ON g.id = ug.group_id
+            WHERE ug.user_id = ?
+        `);
+        return stmt.all(userId) as Group[];
+    },
+    setUserGroups: (userId: number, groupIds: number[]): void => {
+        // Remove all current groups
+        const delStmt = db.prepare('DELETE FROM UserGroups WHERE user_id = ?');
+        delStmt.run(userId);
+        // Add new groups
+        const insStmt = db.prepare('INSERT INTO UserGroups (user_id, group_id) VALUES (?, ?)');
+        for (const groupId of groupIds) {
+            insStmt.run(userId, groupId);
+        }
+    },
+    // getAllGroups, getUserGroups, setUserGroups are defined above and should not be duplicated here
     // User operations (unified for all user types)
     createUser: (username: string, hashedPassword: string, name: string, email: string, type: 'user' | 'admin' | 'ultimate_admin' = 'user'): DatabaseResult => {
         const stmt = db.prepare(`
@@ -180,6 +220,24 @@ export const dbUtils = {
         return stmt.get(id) as TrainingInfo | undefined;
     },
     
+    updateTraining: (id: number, name: string, filePath: string | null): void => {
+        let sql = 'UPDATE TrainingInfo SET name = ?';
+        const params: any[] = [name];
+        if (filePath) {
+            sql += ', file_path = ?';
+            params.push(filePath);
+        }
+        sql += ', updated_at = CURRENT_TIMESTAMP WHERE id = ?';
+        params.push(id);
+        const stmt = db.prepare(sql);
+        stmt.run(...params);
+    },
+    
+    deleteTraining: (id: number): void => {
+        const stmt = db.prepare('DELETE FROM TrainingInfo WHERE id = ?');
+        stmt.run(id);
+    },
+    
     // File access operations
     setFileAccess: (trainingId: number, accessType: string, targetId?: number): DatabaseResult => {
         const stmt = db.prepare(`
@@ -231,13 +289,35 @@ export const dbUtils = {
         return stmt.all() as Payment[];
     },
     
-    updatePaymentStatus: (id: number, status: string): DatabaseResult => {
-        const stmt = db.prepare(`
-            UPDATE Payments 
-            SET status = ? 
-            WHERE id = ?
-        `);
-        return stmt.run(status, id) as DatabaseResult;
+    getPaymentById: (id: number): Payment | undefined => {
+        const stmt = db.prepare(`SELECT * FROM Payments WHERE id = ?`);
+        return stmt.get(id) as Payment | undefined;
+    },
+    updatePaymentStatus: (id: number, status: string): void => {
+        const stmt = db.prepare(`UPDATE Payments SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`);
+        stmt.run(status, id);
+    },
+
+    updatePayment: (id: number, amount: number, status: string, date: string): void => {
+        const stmt = db.prepare(`UPDATE Payments SET amount = ?, status = ?, date = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`);
+        stmt.run(amount, status, date, id);
+    },
+
+    deletePayment: (id: number): void => {
+        const stmt = db.prepare('DELETE FROM Payments WHERE id = ?');
+        stmt.run(id);
+    },
+    
+    // Admin operations
+    deleteAdmin: (id: number): void => {
+        const stmt = db.prepare("DELETE FROM Users WHERE id = ? AND type IN ('admin', 'ultimate_admin')");
+        stmt.run(id);
+    },
+    
+    // Update user data
+    updateUser: (id: number, username: string, hashedPassword: string, name: string, email: string, type: string): void => {
+        const stmt = db.prepare(`UPDATE Users SET username = ?, password = ?, name = ?, email = ?, type = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`);
+        stmt.run(username, hashedPassword, name, email, type, id);
     },
     
     // Get database instance for custom queries
