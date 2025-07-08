@@ -1,8 +1,9 @@
 <script>
-  export let group;
-  export let users = [];
-  let name = group.name;
-  let selectedUsers = group.users ? group.users.map(u => u.id) : [];
+  export let data;
+  let group = data.group;
+  let users = data.users ?? [];
+  let name = group?.name ?? '';
+  let selectedUsers = group?.users ? group.users.map(u => u.id) : [];
 </script>
 
 <div class="admin-dashboard">

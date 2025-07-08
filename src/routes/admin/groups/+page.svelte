@@ -1,5 +1,6 @@
 <script>
-  export let groups = [];
+  export let data;
+  let groups = data.groups || [];
 </script>
 
 <div class="admin-dashboard">
@@ -21,6 +22,9 @@
           <td>{group.users?.map(u => u.name).join(', ')}</td>
           <td>
             <a href={`/admin/groups/${group.id}/edit`} class="edit-btn">Editar</a>
+            <form method="POST" action={`/admin/groups/${group.id}/delete`} style="display:inline;" on:submit={(e) => { if (!confirm('Tem certeza que deseja deletar este grupo?')) e.preventDefault(); }}>
+              <button type="submit" class="delete-btn">Deletar</button>
+            </form>
           </td>
         </tr>
       {/each}
@@ -50,9 +54,29 @@
   font-size: 1rem;
   transition: background 0.2s, color 0.2s;
 }
+
+.admin-dashboard h1 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 .back-btn:hover, .create-btn:hover, .edit-btn:hover {
   background: #207520;
   color: #fff;
+}
+.delete-btn {
+  background: #a00;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4em 1em;
+  font-size: 0.98em;
+  cursor: pointer;
+  margin-left: 0.5em;
+}
+.delete-btn:hover {
+  background: #d00;
 }
 .groups-table {
   width: 100%;

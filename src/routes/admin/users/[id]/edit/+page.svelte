@@ -12,9 +12,11 @@
     </label>
     <br/><br/>
     <label>Senha:<br/>
-      <input type="password" name="password" {user ? '' : 'required'} autocomplete="new-password" />
       {#if user}
+        <input type="password" name="password" autocomplete="new-password" />
         <small>Deixe em branco para não alterar</small>
+      {:else}
+        <input type="password" name="password" required autocomplete="new-password" />
       {/if}
     </label>
     <br/><br/>
@@ -58,8 +60,6 @@
     max-width: 98vw;
   }
 }
-</style>
-<style>
 .back-btn {
   display: inline-block;
   margin-bottom: 1.5rem;

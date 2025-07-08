@@ -1,3 +1,9 @@
+// Get all users (active and inactive)
+function getAllUsers(): User[] {
+    const stmt = db.prepare('SELECT * FROM Users ORDER BY created_at DESC');
+    return stmt.all() as User[];
+}
+
 // File access for a training (helper for edit page)
 function getFileAccessByTraining(trainingId: number): FileAccess[] {
     const stmt = db.prepare('SELECT * FROM FileAccess WHERE training_id = ?');
@@ -121,6 +127,8 @@ async function createUltimateAdminFromEnv(): Promise<void> {
 export const dbUtils = {
     // Group operations
     setUserActive,
+    // getFileAccessByTraining: (trainingId: number) => getFileAccessByTraining(trainingId),
+    getAllUsers,
     getFileAccessByTraining,
     getAllGroups: (): (Group & { users: User[] })[] => {
         // Get all groups
@@ -156,6 +164,32 @@ export const dbUtils = {
         }
     },
     // getAllGroups, getUserGroups, setUserGroups are defined above and should not be duplicated here
+
+
+    // Create a new group and return its id
+    createGroup: (name: string): number => {
+        const stmt = db.prepare('INSERT INTO Groups (name) VALUES (?)');
+        const result = stmt.run(name);
+        return result.lastInsertRowid as number;
+    },
+
+    // Update group name
+    updateGroup: (groupId: number, name: string): void => {
+        const stmt = db.prepare('UPDATE Groups SET name = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
+        stmt.run(name, groupId);
+    },
+
+    // Set users for a group (remove all, then add selected)
+    setGroupUsers: (groupId: number, userIds: number[]): void => {
+        // Remove all current users from group
+        const delStmt = db.prepare('DELETE FROM UserGroups WHERE group_id = ?');
+        delStmt.run(groupId);
+        // Add new users
+        const insStmt = db.prepare('INSERT INTO UserGroups (user_id, group_id) VALUES (?, ?)');
+        for (const userId of userIds) {
+            insStmt.run(userId, groupId);
+        }
+    },
     // User operations (unified for all user types)
     createUser: (username: string, hashedPassword: string, name: string, email: string, type: 'user' | 'admin' | 'ultimate_admin' = 'user'): DatabaseResult => {
         const stmt = db.prepare(`
@@ -335,6 +369,16 @@ export const dbUtils = {
     updateUser: (id: number, username: string, hashedPassword: string, name: string, email: string, type: string): void => {
         const stmt = db.prepare(`UPDATE Users SET username = ?, password = ?, name = ?, email = ?, type = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`);
         stmt.run(username, hashedPassword, name, email, type, id);
+    },
+    
+    // Delete group and its associations
+    deleteGroup: (groupId: number): void => {
+        // Remove group from UserGroups first (due to FK)
+        const delUserGroups = db.prepare('DELETE FROM UserGroups WHERE group_id = ?');
+        delUserGroups.run(groupId);
+        // Remove group itself
+        const delGroup = db.prepare('DELETE FROM Groups WHERE id = ?');
+        delGroup.run(groupId);
     },
     
     // Get database instance for custom queries

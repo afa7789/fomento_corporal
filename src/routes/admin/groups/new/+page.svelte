@@ -1,5 +1,6 @@
 <script>
-  export let users = [];
+  export let data;
+  let users = data.users || [];
   let name = '';
   let selectedUsers = [];
 </script>

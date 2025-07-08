@@ -1,7 +1,8 @@
 <script>
+  export let data;
   export let form;
-  export let groups = [];
-  export let users = [];
+  let groups = data.groups || [];
+  let users = data.users || [];
 </script>
 
 <div class="admin-dashboard">
@@ -17,17 +18,16 @@
     <label>Nome do treinamento:<br/>
       <input type="text" name="name" required />
     </label>
-    <br/><br/>
     <label>Conteúdo do arquivo:<br/>
       <textarea name="file_content" rows="10" placeholder="Cole aqui o conteúdo do arquivo" style="font-family:monospace; width:100%; resize:vertical;" required></textarea>
     </label>
-    <br/><br/>
-    <fieldset style="border:1px solid #ccc; border-radius:6px; padding:1rem;">
+    <fieldset class="brutalist-box">
       <legend>Compartilhamento</legend>
-      <label style="display:block; margin-bottom:0.5rem;">
-        <input type="checkbox" name="everyone" value="1" /> Acessível a todos
+      <label class="brutalist-checkbox-label">
+        <input type="checkbox" name="everyone" value="1" class="brutalist-checkbox" />
+        <span>Acessível a todos</span>
       </label>
-      <label style="display:block; margin-bottom:0.5rem;">
+      <label style="display:block; margin-bottom:0.1rem;">
         Grupos:<br/>
         <div class="checkbox-list">
           {#each groups as group}
@@ -35,7 +35,7 @@
           {/each}
         </div>
       </label>
-      <label style="display:block; margin-bottom:0.5rem;">
+      <label style="display:block; margin-bottom:0.1rem;">
         Usuários:<br/>
         <div class="checkbox-list">
           {#each users as user}
@@ -43,7 +43,6 @@
           {/each}
         </div>
       </label>
-
       <small>Você pode combinar grupos, usuários e o acesso geral.</small>
     </fieldset>
     <br/>
@@ -54,11 +53,12 @@
 <style>
 .back-btn {
   display: inline-block;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem 0.5rem 1.5rem 0
   color: #207520;
   background: #e6ffe6;
   border: 1px solid #b2e5b2;
   border-radius: 6px;
+  
   padding: 0.4rem 1.2rem;
   text-decoration: none;
   font-weight: 500;
@@ -98,6 +98,7 @@
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+
 form label {
   display: block;
   margin-bottom: 1rem;
@@ -137,6 +138,33 @@ button:hover {
   border-radius: 6px;
   padding: 0.7rem;
   margin-bottom: 1rem;
+}
+.brutalist-box {
+  border: 2px solid #222;
+  border-radius: 10px;
+  background: #fff;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-family: 'IBM Plex Mono', 'Menlo', 'Monaco', monospace;
+  box-shadow: 4px 4px 0 #222;
+  text-align: left;
+}
+.brutalist-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  font-size: 1.1em;
+  font-family: inherit;
+  margin-bottom: 1.2em;
+  font-weight: bold;
+}
+.brutalist-checkbox {
+  width: 1.3em;
+  height: 1.3em;
+  accent-color: #222;
+  border: 2px solid #222;
+  border-radius: 4px;
+  margin-right: 0.5em;
 }
 @media (max-width: 600px) {
   .admin-dashboard {

@@ -16,7 +16,7 @@
     <ul class="admin-list">
       {#each admins as admin}
         <li class="admin-item">
-          <div><strong>{admin.name}</strong> <span class="admin-type">[{admin.type}]</span></div>
+          <div><strong>{admin.name}</strong></div>
           <div class="admin-info">{admin.username} &bull; {admin.email}</div>
           <div class="admin-actions">
             <a href={`/admin/admins/${admin.id}/edit`} class="edit-btn">Editar</a>
@@ -82,11 +82,7 @@
     text-align: left;
     font-size: 1rem;
   }
-  .admin-type {
-    color: #0066cc;
-    font-size: 0.95em;
-    margin-left: 0.5em;
-  }
+
   .admin-info {
     color: #555;
     font-size: 0.95em;

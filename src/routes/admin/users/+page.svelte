@@ -7,6 +7,8 @@
 <div class="admin-dashboard">
   <h1>Lista de Usuários</h1>
   <a href="/admin" class="back-btn">← Voltar ao dashboard</a>
+  <a href="/admin/users/new" class="add-btn">+ Novo Usuário</a>
+  <a href="/admin/users/inactive" class="add-btn" style="background:#a00;color:#fff;">Usuários Desativados</a>
   <form method="GET" class="search-form">
     <input type="text" name="search" placeholder="Buscar usuário, email ou nome..." bind:value={search} />
     <button type="submit">Buscar</button>
@@ -17,13 +19,44 @@
     <ul class="user-list">
       {#each users as user}
         <li class="user-item">
-          <div><strong>{user.name}</strong> <span class="user-type">[{user.type}]</span></div>
+          <div><strong>{user.name}</strong></div>
           <div class="user-info">{user.username} &bull; {user.email}</div>
-          <form method="POST" action="/admin/users/{user.id}/toggle-active" style="display:inline">
-            <button type="submit" class="{user.is_active ? 'disable-btn' : 'enable-btn'}">
-              {user.is_active ? 'Desativar' : 'Ativar'}
-            </button>
-          </form>
+          <button
+            type="button"
+            class={user.is_active ? 'disable-btn' : 'enable-btn'}
+            on:click={async () => {
+              const res = await fetch(`/admin/users/${user.id}/toggle-active`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ active: !user.is_active })
+              });
+              if (res.ok) {
+                window.location.reload();
+              } else {
+                alert('Erro ao atualizar usuário');
+              }
+            }}
+          >
+            {user.is_active ? 'Desativar' : 'Ativar'}
+          </button>
+          {#if !user.is_active}
+            <button
+              type="button"
+              class="enable-btn"
+              on:click={async () => {
+                const res = await fetch(`/admin/users/${user.id}/toggle-active`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ active: true })
+                });
+                if (res.ok) {
+                  window.location.reload();
+                } else {
+                  alert('Erro ao ativar usuário');
+                }
+              }}
+            >Ativar</button>
+          {/if}
         </li>
       {/each}
     </ul>
@@ -62,6 +95,23 @@
   background: #207520;
   color: #fff;
 }
+.add-btn {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  margin-left: 1rem;
+  color: #fff;
+  background: #207520;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 1.2rem;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background 0.2s, color 0.2s;
+}
+.add-btn:hover {
+  background: #145014;
+}
 .search-form {
   display: flex;
   gap: 0.5em;
@@ -98,11 +148,6 @@
   padding: 1rem;
   text-align: left;
   font-size: 1rem;
-}
-.user-type {
-  color: #0066cc;
-  font-size: 0.95em;
-  margin-left: 0.5em;
 }
 .user-info {
   color: #555;

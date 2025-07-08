@@ -103,6 +103,6 @@ INSERT OR IGNORE INTO Users (username, password, name, email, type)
 VALUES ('admin', '$2b$10$3CdDZIOPuwxH4gtbA/RGueW.kH5Eoh6YfipG4QH7s4rAQDa7662sK', 'Administrator', 'admin@fomento.com', 'admin');
 
 -- Insert some default groups
-INSERT OR IGNORE INTO Groups (name) VALUES ('Premium Users');
-INSERT OR IGNORE INTO Groups (name) VALUES ('Basic Users');
-INSERT OR IGNORE INTO Groups (name) VALUES ('Trial Users');
+-- INSERT OR IGNORE INTO Groups (name) VALUES ('Premium Users');
+-- INSERT OR IGNORE INTO Groups (name) VALUES ('Basic Users');
+-- INSERT OR IGNORE INTO Groups (name) VALUES ('Trial Users');

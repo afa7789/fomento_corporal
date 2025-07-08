@@ -1,34 +1,28 @@
 <script>
   export let data;
-  const admin = data.admin;
 </script>
 
 <div class="admin-dashboard">
-  <h1>{admin ? 'Editar Admin' : 'Novo Admin'}</h1>
-  <a href="/admin" class="back-btn">← Voltar ao dashboard</a>
+  <h1>Novo Admin</h1>
+  <a href="/admin/admins" class="back-btn">← Voltar à lista de admins</a>
   <form method="POST">
     <label>Usuário:<br/>
-      <input type="text" name="username" required value={admin?.username || ''} />
+      <input type="text" name="username" required />
     </label>
     <br/><br/>
     <label>Senha:<br/>
-      {#if admin}
-        <input type="password" name="password" autocomplete="new-password" />
-        <small>Deixe em branco para não alterar</small>
-      {:else}
-        <input type="password" name="password" required autocomplete="new-password" />
-      {/if}
+      <input type="password" name="password" required autocomplete="new-password" />
     </label>
     <br/><br/>
     <label>Nome:<br/>
-      <input type="text" name="name" required value={admin?.name || ''} />
+      <input type="text" name="name" required />
     </label>
     <br/><br/>
     <label>Email:<br/>
-      <input type="email" name="email" required value={admin?.email || ''} />
+      <input type="email" name="email" required />
     </label>
     <br/><br/>
-    <button type="submit">Salvar</button>
+    <button type="submit">Adicionar</button>
   </form>
 </div>
 

@@ -35,16 +35,14 @@
     font-size: 1.2rem;
     border: none;
     cursor: pointer;
-    max-width:  50vw;
-    min-width: 200px;
+    width: 200px;
   }
   
   .login-button:hover {
     background: #fff;
     color: #000;
     border: 3px solid #000;
-    max-width:  50vw;
-    min-width: 200px;
+    width: 200px;
   }
   
   @media (max-width: 768px) {

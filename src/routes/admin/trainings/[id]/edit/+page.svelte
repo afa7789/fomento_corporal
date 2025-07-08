@@ -7,7 +7,7 @@
   export let form: ActionData | undefined;
   const training = data.training;
   let name: string = training?.name || '';
-  let fileContent: string = '';
+  let fileContent: string = data.fileContent || '';
   let submitting = false;
   let feedbackTimeout: NodeJS.Timeout | null = null;
   // SSR data

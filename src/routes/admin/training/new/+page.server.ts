@@ -1,13 +1,13 @@
+import { dbUtils } from '$lib/db.js';
 import type { PageServerLoad } from './$types';
+import { fail, redirect } from '@sveltejs/kit';
+import type { Actions } from './$types';
 
 export const load: PageServerLoad = async () => {
   const groups = dbUtils.getAllGroups();
   const users = dbUtils.getUsersByType('user');
   return { groups, users };
 };
-import { dbUtils } from '$lib/db.js';
-import { fail, redirect } from '@sveltejs/kit';
-import type { Actions } from './$types';
 
 export const actions: Actions = {
   default: async ({ request, locals }) => {
@@ -55,6 +55,7 @@ export const actions: Actions = {
     } else if (users) {
       dbUtils.setFileAccess(trainingId, 'user', Number(users));
     }
-    return { success: true };
+    // Redirecionar para a lista de treinamentos após criar
+    throw redirect(303, '/admin/trainings');
   }
 };

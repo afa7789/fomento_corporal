@@ -22,9 +22,15 @@
           <div class="training-info">Criado por: {t.creator_name}</div>
           <div class="training-actions">
             <a href="/admin/trainings/{t.id}/edit" class="edit-btn">Editar</a>
-            <form method="POST" action="/admin/trainings/{t.id}/delete" style="display:inline;">
-              <button type="submit" class="delete-btn">Excluir</button>
-            </form>
+            <button type="button" class="delete-btn" on:click={async () => {
+              if (!confirm('Tem certeza que deseja excluir este treinamento?')) return;
+              const res = await fetch(`/admin/trainings/${t.id}/delete`, { method: 'DELETE' });
+              if (res.ok) {
+                window.location.reload();
+              } else {
+                alert('Erro ao excluir treinamento');
+              }
+            }}>Excluir</button>
           </div>
         </li>
       {/each}
