@@ -8,6 +8,7 @@
   const training = data.training;
   let name: string = training?.name || '';
   let fileContent: string = data.fileContent || '';
+  let fileError: string = data.fileError || '';
   let submitting = false;
   let feedbackTimeout: NodeJS.Timeout | null = null;
   // SSR data
@@ -36,12 +37,15 @@
 
 <div class="admin-dashboard">
   <h1>{training ? 'Editar Treinamento' : 'Novo Treinamento'}</h1>
-  <a href="/admin" class="back-btn">← Voltar ao dashboard</a>
+  <a href="/admin" class="back-btn"> Voltar ao dashboard</a>
   {#if form?.success}
     <div class="success" role="status">{form.success}</div>
   {/if}
   {#if form?.error}
     <div class="error" role="alert">{form.error}</div>
+  {/if}
+  {#if fileError}
+    <div class="error" role="alert">{fileError}</div>
   {/if}
   <form method="POST" on:submit|preventDefault={async (e) => {
     submitting = true;
@@ -59,7 +63,7 @@
     </label>
     <br/><br/>
     <label>Conteúdo do arquivo:<br/>
-      <textarea name="file_content" rows="10" placeholder="Cole aqui o conteúdo do arquivo" style="font-family:monospace; width:100%; resize:vertical;">{fileContent}</textarea>
+      <textarea name="file_content" rows="10" placeholder="Cole aqui o conteúdo do arquivo" style="font-family:monospace; width:100%; resize:vertical;" bind:value={fileContent}></textarea>
     </label>
     <br/><br/>
     <fieldset style="border:1px solid #ccc; border-radius:6px; padding:1rem;">

@@ -10,8 +10,8 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"test:db": "node scripts/simple-db-test.js",
-		"init:db": "node scripts/simple-db-test.js"
+		"test:db": "npx tsx scripts/test-db.ts",
+		"init:db": "node scripts/init-db.js"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^6.0.0",

@@ -1,5 +1,6 @@
 import { dbUtils } from '$lib/db.js';
 import { readFileSync } from 'fs';
+import { join } from 'path';
 import { redirect, fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -12,20 +13,20 @@ export const load: PageServerLoad = ({ params }) => {
   const access = dbUtils.getFileAccessByTraining(id);
 
   let fileContent = '';
+  let fileError = '';
   if (training?.file_path) {
     try {
-      fileContent = readFileSync(training.file_path, 'utf-8');
+      const filePath = join(process.cwd(), 'uploads', training.file_path);
+      console.log('[EDIT TRAINING] Tentando ler arquivo do treinamento em:', filePath);
+      fileContent = readFileSync(filePath, 'utf-8');
+      console.log('[EDIT TRAINING] Arquivo lido com sucesso.');
     } catch (e) {
-      // Se o arquivo não existe, remover o treinamento e acessos relacionados
-      dbUtils.deleteTraining(id);
-      const db = dbUtils.getDatabase();
-      db.prepare('DELETE FROM FileAccess WHERE training_id = ?').run(id);
-      // Opcional: pode adicionar um log ou feedback
-      throw redirect(303, '/admin/trainings');
+      console.error('[EDIT TRAINING] Falha ao ler arquivo do treinamento:', e);
+      fileError = 'O arquivo do treinamento não foi encontrado. Por favor, envie novamente ou contate o administrador.';
     }
   }
 
-  return { training, groups, users, access, fileContent };
+  return { training, groups, users, access, fileContent, fileError };
 };
 
 export const actions: Actions = {
@@ -51,18 +52,18 @@ export const actions: Actions = {
     if (!training || !training.file_path) {
       return fail(404, { error: 'Treinamento não encontrado.' }) as any;
     }
-    // Write file content to disk, always inside /trainings
+    // Write file content to disk, always inside /uploads
     try {
       const { writeFileSync, existsSync, mkdirSync } = await import('fs');
-      const { join, dirname, basename } = await import('path');
-      const trainingsDir = join(process.cwd(), 'trainings');
-      if (!existsSync(trainingsDir)) mkdirSync(trainingsDir);
-      // Always save in /trainings with the same basename
+      const { join, basename } = await import('path');
+      const uploadsDir = join(process.cwd(), 'uploads');
+      if (!existsSync(uploadsDir)) mkdirSync(uploadsDir);
+      // Always save in /uploads with the same basename
       const fileName = basename(training.file_path || `training_${id}.txt`);
-      const newPath = join(trainingsDir, fileName);
+      const newPath = join(uploadsDir, fileName);
       writeFileSync(newPath, fileContent, 'utf-8');
-      if (newPath !== training.file_path) {
-        dbUtils.updateTraining(id, name, newPath);
+      if (fileName !== training.file_path) {
+        dbUtils.updateTraining(id, name, fileName);
       }
     } catch (e) {
       return fail(500, { error: 'Erro ao salvar o arquivo.' }) as any;
