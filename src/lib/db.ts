@@ -25,7 +25,7 @@ function deletePayment(id: number): void {
     stmt.run(id);
 }
 import Database from 'better-sqlite3';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import type { User, Admin, TrainingInfo, FileAccess, Payment, DatabaseResult, Group } from './types.js';
@@ -36,6 +36,7 @@ const __dirname = dirname(__filename);
 // Get database path from environment variables
 const DATABASE_PATH = process.env.DATABASE_PATH || './data.db';
 
+
 // Initialize database connection
 let db: Database.Database;
 
@@ -45,24 +46,52 @@ export function initDatabase(): Database.Database {
     }
 
     try {
+        // Check if database file exists
+        const dbExists = existsSync(DATABASE_PATH);
+
         // Create database connection
         db = new Database(DATABASE_PATH);
-        
+
         // Enable foreign key constraints
         db.pragma('foreign_keys = ON');
-        
+
         // Set journal mode to WAL for better performance
         db.pragma('journal_mode = WAL');
-        
+
         console.log(`Database connected: ${DATABASE_PATH}`);
-        
-        // Run migrations if this is a new database
-        runMigrations();
-        
+
+        // Only run migrations if this is a new database OR tables don't exist
+        if (!dbExists || !checkTablesExist()) {
+            console.log('🔨 Running database migrations...');
+            runMigrations();
+        } else {
+            console.log('✅ Database already initialized, skipping migrations');
+        }
+
         return db;
     } catch (error) {
         console.error('Failed to initialize database:', error);
         throw error;
+    }
+}
+
+function checkTablesExist(): boolean {
+    try {
+        // Check if core tables exist by querying sqlite_master
+        const stmt = db.prepare(`
+            SELECT name FROM sqlite_master 
+            WHERE type='table' AND name IN ('Users', 'Groups', 'TrainingInfo', 'FileAccess', 'Payments', 'UserGroups')
+        `);
+        const tables = stmt.all() as { name: string }[];
+
+        // Return true if all expected tables exist
+        const expectedTables = ['Users', 'Groups', 'TrainingInfo', 'FileAccess', 'Payments', 'UserGroups'];
+        return expectedTables.every(table => 
+            tables.some((row: { name: string }) => row.name === table)
+        );
+    } catch (error) {
+        console.log("Error checking tables, assuming they don't exist:", error);
+        return false;
     }
 }
 
