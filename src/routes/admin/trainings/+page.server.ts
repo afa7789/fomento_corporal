@@ -6,39 +6,40 @@ export const load: PageServerLoad = async ({ url, locals }) => {
     throw redirect(302, '/login');
   }
   const search = url.searchParams.get('search')?.toLowerCase() || '';
-  const related = url.searchParams.get('related')?.toLowerCase() || '';
   let trainings = dbUtils.getTrainings();
 
   if (search) {
-    trainings = trainings.filter(t => t.name.toLowerCase().includes(search));
-  }
-  if (related) {
-    if (["todos", "todo mundo", "everyone"].includes(related.trim().toLowerCase())) {
-      // Filtra treinamentos que tenham pelo menos um FileAccess com access_type = 'everyone'
-      const fileAccessMap = new Map();
-      for (const t of trainings) {
-        const accesses = dbUtils.getFileAccessByTraining(t.id);
-        if (accesses.some(a => a.access_type === 'everyone')) {
-          fileAccessMap.set(t.id, true);
-        }
+    const terms = search.split(',').map(s => s.trim()).filter(Boolean);
+    const allGroups = dbUtils.getAllGroups();
+    let resultSet = new Set();
+    for (const term of terms) {
+      if (["todos", "todo mundo", "everyone"].includes(term)) {
+        // Treinamentos compartilhados com todo mundo
+        trainings.forEach(t => {
+          const accesses = dbUtils.getFileAccessByTraining(t.id);
+          if (accesses.some(a => a.access_type === 'everyone')) {
+            resultSet.add(t.id);
+          }
+        });
       }
-      trainings = trainings.filter(t => fileAccessMap.has(t.id));
-    } else {
-      trainings = trainings.filter(t => { 
-        // 1. Criador
-        if (t.creator_name && t.creator_name.toLowerCase().includes(related)) return true;
-        // 2. Grupo relacionado
+      trainings.forEach(t => {
+        // Nome do treinamento
+        if (t.name.toLowerCase().includes(term)) resultSet.add(t.id);
+        // Nome do criador
+        if (t.creator_name && t.creator_name.toLowerCase().includes(term)) resultSet.add(t.id);
+        // Grupo relacionado
         const accesses = dbUtils.getFileAccessByTraining(t.id);
         for (const a of accesses) {
           if (a.access_type === 'group' && a.target_id) {
-            // Buscar nome do grupo
-            const group = dbUtils.getAllGroups().find(g => g.id === a.target_id);
-            if (group && group.name.toLowerCase().includes(related)) return true;
+            const group = allGroups.find(g => g.id === a.target_id);
+            if (group && group.name.toLowerCase().includes(term)) {
+              resultSet.add(t.id);
+            }
           }
         }
-        return false;
       });
     }
+    trainings = trainings.filter(t => resultSet.has(t.id));
   }
-  return { trainings, search, related };
+  return { trainings, search };
 };

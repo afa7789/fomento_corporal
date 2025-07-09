@@ -5,6 +5,7 @@
   export let data;
   let groups = data.groups || [];
   let search = data.search || '';
+  $: groups = data.groups || [];
   $: search = data.search || '';
 </script>
 

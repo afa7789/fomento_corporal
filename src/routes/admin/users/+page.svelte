@@ -1,7 +1,8 @@
 <script>
   export let data;
-  const users = data.users || [];
+  let users = data.users || [];
   let search = data.search || '';
+  $: users = data.users || [];
   $: search = data.search || '';
 </script>
 
