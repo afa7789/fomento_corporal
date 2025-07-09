@@ -2,14 +2,21 @@
   export let data;
   const trainings = data.trainings || [];
   let search = data.search || '';
+  let related = data.related || '';
+  $: search = data.search || '';
+  $: related = data.related || '';
 </script>
-
+<script context="module">
+  import { enhance } from '$app/forms';
+</script>
 <div class="admin-dashboard">
   <h1>Lista de Treinamentos</h1>
   <a href="/admin" class="back-btn">← Voltar ao dashboard</a>
-  <form method="GET" class="search-form">
-    <label for="search" class="search-label">Buscar por nome:</label>
-    <input id="search" type="text" name="search" placeholder="Digite o nome..." bind:value={search} />
+  <form method="GET" class="search-form" use:enhance>
+    <label for="search" class="search-label">Buscar por nome do treinamento:</label>
+    <input id="search" type="text" name="search" placeholder="Digite o nome do treinamento..." bind:value={search} />
+    <label for="related" class="search-label">Buscar por usuário relacionado:</label>
+    <input id="related" type="text" name="related" placeholder="Digite o nome do usuário..." bind:value={related} />
     <button type="submit">Buscar</button>
   </form>
   {#if trainings.length === 0}

@@ -2,6 +2,7 @@
   export let data;
   const users = data.users || [];
   let search = data.search || '';
+  $: search = data.search || '';
 </script>
 
 <div class="admin-dashboard">
@@ -9,7 +10,7 @@
   <a href="/admin" class="back-btn">← Voltar ao dashboard</a>
   <a href="/admin/users/new" class="add-btn">+ Novo Usuário</a>
   <a href="/admin/users/inactive" class="add-btn" style="background:#a00;color:#fff;">Usuários Desativados</a>
-  <form method="GET" class="search-form">
+  <form method="GET" class="search-form" use:enhance>
     <label for="search" class="search-label">Buscar usuário, email ou nome:</label>
     <input id="search" type="text" name="search" placeholder="Digite para buscar..." bind:value={search} />
     <button type="submit">Buscar</button>

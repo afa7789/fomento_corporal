@@ -1,12 +1,22 @@
+<script context="module">
+  import { enhance } from '$app/forms';
+</script>
 <script>
   export let data;
   let groups = data.groups || [];
+  let search = data.search || '';
+  $: search = data.search || '';
 </script>
 
 <div class="admin-dashboard">
   <h1>Grupos</h1>
   <a href="/admin" class="back-btn">← Voltar ao dashboard</a>
   <a href="/admin/groups/new" class="create-btn">+ Novo Grupo</a>
+  <form method="GET" class="search-form" use:enhance>
+    <label for="search" class="search-label">Buscar grupo ou usuário:</label>
+    <input id="search" type="text" name="search" placeholder="Digite para buscar..." bind:value={search} />
+    <button type="submit">Buscar</button>
+  </form>
   <table class="groups-table">
     <thead>
       <tr>
