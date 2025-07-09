@@ -3,23 +3,41 @@
   const payments = data.payments || [];
   let status = data.status || '';
   let sort = data.sort || 'desc';
+  let search = data.search || '';
+
+  // Sincroniza variáveis locais com data sempre que data mudar (para funcionar com enhance)
+  $: status = data.status || '';
+  $: sort = data.sort || 'desc';
+  $: search = data.search || '';
 </script>
 
 <div class="admin-dashboard">
   <h1>Pagamentos</h1>
   <a href="/admin" class="back-btn">← Voltar ao dashboard</a>
-  <form method="GET" class="filter-form">
-    <select name="status" bind:value={status}>
-      <option value="">Todos</option>
-      <option value="pending">Pendente</option>
-      <option value="approved">Aprovado</option>
-      <option value="rejected">Rejeitado</option>
-    </select>
-    <select name="sort" bind:value={sort}>
-      <option value="desc">Mais recentes</option>
-      <option value="asc">Mais antigos</option>
-    </select>
-    <button type="submit">Filtrar</button>
+  <form method="GET" class="filter-form" use:enhance>
+    <div class="filter-row-search">
+      <input
+        type="text"
+        name="search"
+        placeholder="Buscar por usuário..."
+        bind:value={search}
+        class="search-input"
+        autocomplete="off"
+      />
+    </div>
+    <div class="filter-row-selects">
+      <select name="status" bind:value={status}>
+        <option value="">Todos</option>
+        <option value="pending">Pendente</option>
+        <option value="approved">Aprovado</option>
+        <option value="rejeitado">Rejeitado</option>
+      </select>
+      <select name="sort" bind:value={sort}>
+        <option value="desc">Mais recentes</option>
+        <option value="asc">Mais antigos</option>
+      </select>
+      <button type="submit">Filtrar</button>
+    </div>
   </form>
   {#if payments.length === 0}
     <p>Nenhum pagamento encontrado.</p>
@@ -56,25 +74,42 @@
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+/* Filtro geral */
 .filter-form {
-  display: flex;
-  gap: 0.5em;
+  width: 100%;
   margin-bottom: 1.2em;
 }
-.filter-form select, .filter-form button {
+/* Linha do input de busca */
+.filter-row-search {
+  width: 100%;
+  margin-bottom: 0.5em;
+}
+.search-input {
+  width: 100%;
   padding: 0.5em;
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 1em;
 }
-.filter-form button {
+/* Linha dos selects e botão */
+.filter-row-selects {
+  display: flex;
+  gap: 0.5em;
+}
+.filter-row-selects select, .filter-row-selects button {
+  padding: 0.5em;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+}
+.filter-row-selects button {
   background: #0066cc;
   color: #fff;
   font-weight: bold;
   border: none;
   cursor: pointer;
 }
-.filter-form button:hover {
+.filter-row-selects button:hover {
   background: #004080;
 }
 .payment-list {
@@ -128,4 +163,48 @@
   background: #207520;
   color: #fff;
 }
+/* search bar style */
+.filter-form .search-input {
+  flex: 1 1 120px;
+  min-width: 0;
+  padding: 0.5em;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+}
+/* search bar style */
+.filter-row-search {
+  width: 100%;
+  margin-bottom: 0.5em;
+}
+.search-input {
+  width: 100%;
+  padding: 0.5em;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+}
+.filter-row-selects {
+  display: flex;
+  gap: 0.5em;
+}
+.filter-row-selects select, .filter-row-selects button {
+  padding: 0.5em;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+}
+.filter-row-selects button {
+  background: #0066cc;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+.filter-row-selects button:hover {
+  background: #004080;
+}
 </style>
+<script context="module">
+  import { enhance } from '$app/forms';
+</script>
