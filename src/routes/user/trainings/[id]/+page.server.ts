@@ -27,13 +27,23 @@ export const load: PageServerLoad = async ({ params, locals }) => {
   `);
   const paramsArr = [trainingId, user.id, ...userGroups];
   const training = stmt.get(...paramsArr);
-  if (!training) throw error(403, 'Acesso negado ou treino não encontrado');
+  if (!training) {
+    console.error('[TRAINING ACCESS] Usuário', user.id, 'tentou acessar treino', trainingId, 'mas não tem permissão ou não existe. Grupos do usuário:', userGroups);
+    throw error(403, 'Acesso negado ou treino não encontrado');
+  }
 
   // Lê o arquivo do treino
   let content = '';
+
   try {
-    content = await fs.readFile(training.file_path, 'utf-8');
+    // Corrige caminho relativo: procura em ./uploads se não for absoluto
+    let filePath = training.file_path;
+    if (!filePath.startsWith('/') && !filePath.startsWith('./') && !filePath.startsWith('../')) {
+      filePath = `./uploads/${filePath}`;
+    }
+    content = await fs.readFile(filePath, 'utf-8');
   } catch (e) {
+    console.error('[TRAINING FILE] Falha ao ler arquivo do treino', training.file_path, 'para treino', trainingId, 'do usuário', user.id, 'Erro:', e);
     throw error(404, 'Arquivo do treino não encontrado');
   }
 

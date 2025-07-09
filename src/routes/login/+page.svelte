@@ -5,13 +5,12 @@
   export let form = null;
 </script>
 
-<nav class="login-nav">
-  <a href="/">← VOLTAR</a>
-</nav>
-
 <div class="login-container">
+
   <h1 class="login-title">LOGIN</h1>
-  
+  <nav class="login-nav">
+    <a href="/">← VOLTAR</a>
+  </nav>
   {#if form?.error}
     <div class="login-error">{form.error}</div>
   {/if}

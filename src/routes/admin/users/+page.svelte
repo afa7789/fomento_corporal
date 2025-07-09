@@ -10,7 +10,8 @@
   <a href="/admin/users/new" class="add-btn">+ Novo Usuário</a>
   <a href="/admin/users/inactive" class="add-btn" style="background:#a00;color:#fff;">Usuários Desativados</a>
   <form method="GET" class="search-form">
-    <input type="text" name="search" placeholder="Buscar usuário, email ou nome..." bind:value={search} />
+    <label for="search" class="search-label">Buscar usuário, email ou nome:</label>
+    <input id="search" type="text" name="search" placeholder="Digite para buscar..." bind:value={search} />
     <button type="submit">Buscar</button>
   </form>
   {#if users.length === 0}
@@ -114,15 +115,24 @@
 }
 .search-form {
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
   gap: 0.5em;
   margin-bottom: 1.2em;
+  text-align: left;
+}
+.search-label {
+  font-size: 1em;
+  font-weight: 500;
+  margin-bottom: 0.2em;
+  color: #333;
 }
 .search-form input {
-  flex: 1;
   padding: 0.5em;
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 1em;
+  margin-bottom: 0.2em;
 }
 .search-form button {
   padding: 0.5em 1em;
@@ -132,6 +142,7 @@
   color: #fff;
   font-weight: bold;
   cursor: pointer;
+  align-self: flex-start;
 }
 .search-form button:hover {
   background: #004080;

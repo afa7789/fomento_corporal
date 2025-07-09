@@ -8,7 +8,8 @@
   <h1>Lista de Treinamentos</h1>
   <a href="/admin" class="back-btn">← Voltar ao dashboard</a>
   <form method="GET" class="search-form">
-    <input type="text" name="search" placeholder="Buscar por nome..." bind:value={search} />
+    <label for="search" class="search-label">Buscar por nome:</label>
+    <input id="search" type="text" name="search" placeholder="Digite o nome..." bind:value={search} />
     <button type="submit">Buscar</button>
   </form>
   {#if trainings.length === 0}
@@ -96,30 +97,40 @@
 .delete-btn:hover {
   background: #d00;
 }
-.search-form {
-  display: flex;
-  gap: 0.5em;
-  margin-bottom: 1.2em;
-}
-.search-form input {
-  flex: 1;
-  padding: 0.5em;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 1em;
-}
-.search-form button {
-  padding: 0.5em 1em;
-  border-radius: 4px;
-  border: none;
-  background: #0066cc;
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-}
-.search-form button:hover {
-  background: #004080;
-}
+  .search-form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5em;
+    margin-bottom: 1.2em;
+    text-align: left;
+  }
+  .search-label {
+    font-size: 1em;
+    font-weight: 500;
+    margin-bottom: 0.2em;
+    color: #333;
+  }
+  .search-form input {
+    padding: 0.5em;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+    margin-bottom: 0.2em;
+  }
+  .search-form button {
+    padding: 0.5em 1em;
+    border-radius: 4px;
+    border: none;
+    background: #0066cc;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    align-self: flex-start;
+  }
+  .search-form button:hover {
+    background: #004080;
+  }
 @media (max-width: 600px) {
   .admin-dashboard {
     padding: 8px;

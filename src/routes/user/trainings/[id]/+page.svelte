@@ -5,13 +5,17 @@
 <div class="training-page">
   <h1 class="brutalist-title">{data.title}</h1>
   <pre class="brutalist-content">{data.content}</pre>
+  <div>
+    <br>
+    <a href="/user" class="back-link">← Voltar ao dashboard</a>
+  </div>
 </div>
 
 <style>
 .training-page {
   font-family: monospace;
   background: white;
-  min-height: 100vh;
+min-height: 100vh;
 }
 .brutalist-title {
   font-family: monospace;
@@ -31,5 +35,24 @@
   white-space: pre-wrap;
   margin: 0 auto;
   max-width: 900px;
+}
+
+.back-link {
+  color: #888;
+  text-decoration: underline;
+  font-size: 0.97rem;
+  text-align:left;
+  cursor: pointer;
+  background: none;
+  border: none;
+  margin: 20px;
+  font-family: inherit;
+  transition: color 0.2s;
+  opacity: 0.7;
+}
+.back-link:hover {
+  color: #222;
+  opacity: 1;
+  text-decoration: underline;
 }
 </style>

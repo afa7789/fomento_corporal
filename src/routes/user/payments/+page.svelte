@@ -17,31 +17,33 @@
       <option value="rejected">Rejeitado</option>
     </select>
   </div>
-  <table class="brutal-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Valor</th>
-        <th>Status</th>
-        <th>Data</th>
-        <th>Info</th>
-      </tr>
-    </thead>
-    <tbody>
-      {#each filtered as p}
+  <div class="table-wrapper">
+    <table class="brutal-table">
+      <thead>
         <tr>
-          <td>{p.id}</td>
-          <td>R$ {p.amount}</td>
-          <td class={"status-" + p.status}>{p.status.toUpperCase()}</td>
-          <td>{p.date}</td>
-          <td>{p.info || '-'}</td>
+          <th>ID</th>
+          <th>Valor</th>
+          <th>Status</th>
+          <th>Data</th>
+          <th>Info</th>
         </tr>
-      {/each}
-      {#if filtered.length === 0}
-        <tr><td colspan="5" class="empty">Nenhum pagamento encontrado.</td></tr>
-      {/if}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        {#each filtered as p}
+          <tr>
+            <td>{p.id}</td>
+            <td>R$ {p.amount}</td>
+            <td class={"status-" + p.status}>{p.status.toUpperCase()}</td>
+            <td>{p.date}</td>
+            <td>{p.info || '-'}</td>
+          </tr>
+        {/each}
+        {#if filtered.length === 0}
+          <tr><td colspan="5" class="empty">Nenhum pagamento encontrado.</td></tr>
+        {/if}
+      </tbody>
+    </table>
+  </div>
   <div class="back-btn-container">
     <a href="/user" class="back-btn">← Voltar ao dashboard</a>
   </div>
@@ -147,4 +149,9 @@ h1 {
     gap: 1rem;
   }
 }
+  .table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 1rem;
+  }
 </style>

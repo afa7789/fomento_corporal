@@ -33,7 +33,6 @@
           <div><strong>Data:</strong> {p.created_at?.slice(0,10) || '-'}</div>
           <div class="payment-actions">
             <a href="/admin/payments/{p.id}" class="edit-btn">Ver/Aprovar</a>
-            <a href="/admin/payments/{p.id}/edit" class="edit-btn" style="background:#888;margin-left:0.5em;">Editar/Deletar</a>
           </div>
         </li>
       {/each}

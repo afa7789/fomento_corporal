@@ -342,12 +342,12 @@ export const dbUtils = {
     },
     
     // Payment operations
-    createPayment: (userId: number, amount: number, date: string, proofFilePath?: string): DatabaseResult => {
+    createPayment: (userId: number, amount: number, date: string, proofFilePath?: string, info?: string): DatabaseResult => {
         const stmt = db.prepare(`
-            INSERT INTO Payments (user_id, amount, date, proof_file_path) 
-            VALUES (?, ?, ?, ?)
+            INSERT INTO Payments (user_id, amount, date, proof_file_path, info) 
+            VALUES (?, ?, ?, ?, ?)
         `);
-        return stmt.run(userId, amount, date, proofFilePath || null) as DatabaseResult;
+        return stmt.run(userId, amount, date, proofFilePath || null, info || null) as DatabaseResult;
     },
     
     getPaymentsByUser: (userId: number): Payment[] => {
@@ -370,7 +370,12 @@ export const dbUtils = {
     },
     
     getPaymentById: (id: number): Payment | undefined => {
-        const stmt = db.prepare(`SELECT * FROM Payments WHERE id = ?`);
+        const stmt = db.prepare(`
+            SELECT p.*, u.username, u.name as user_name
+            FROM Payments p
+            JOIN Users u ON p.user_id = u.id
+            WHERE p.id = ?
+        `);
         return stmt.get(id) as Payment | undefined;
     },
     updatePaymentStatus: (id: number, status: string): void => {

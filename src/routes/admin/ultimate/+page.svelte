@@ -8,13 +8,6 @@
     $: user = data?.user;
 </script>
 
-<nav class="nav">
-    <a href="/admin">← VOLTAR ADMIN</a>
-    <form method="POST" action="/logout" class="logout-form" style="display:inline;">
-        <button type="submit" class="logout-btn">SAIR</button>
-    </form>
-</nav>
-
 <div class="container">
     <h1>MODO ULTIMATE ADMIN</h1>
     
@@ -135,14 +128,19 @@
     {/if}
 </div>
 
+<nav class="nav">
+    <a href="/admin">← IR PARA PAINEL ADMIN</a>
+    <form method="POST" action="/logout" class="logout-form" style="display:inline;">
+        <button type="submit" class="logout-btn">SAIR</button>
+    </form>
+</nav>
+
 <style>
 .nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
-    background: #f5f5f5;
-    border-bottom: 1px solid #ddd;
+    border: 0px;
 }
 
 .nav a {
@@ -150,8 +148,6 @@
     color: #333;
     font-weight: bold;
     padding: 0.5rem 1rem;
-    border-radius: 4px;
-    transition: background-color 0.2s;
 }
 
 .nav a:hover {

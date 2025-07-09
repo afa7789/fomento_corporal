@@ -54,6 +54,7 @@ export interface Payment {
     date: string;
     status: 'pending' | 'approved' | 'rejected';
     proof_file_path: string | null;
+    info?: string | null; // Campo de observação/comentário
     created_at: string;
     updated_at: string;
     username?: string; // From JOIN queries

@@ -13,22 +13,30 @@ export const load: PageServerLoad = async ({ params, locals }): Promise<{ paymen
 };
 
 export const actions: Actions = {
-  approve: async ({ params, locals }): Promise<{ success?: boolean; error?: string }> => {
+  default: async ({ params, locals, request }): Promise<{ success?: boolean; error?: string }> => {
+    const form = await request.formData();
+    const action = form.get('action');
+    console.log('[DEBUG] Action received', { action, params });
     if (!locals.user || !['admin', 'ultimate_admin'].includes(locals.user.type)) {
+      console.log('[DEBUG] Access denied for action');
       return { error: 'Acesso negado.' };
     }
     const id = Number(params.id);
-    if (!id) return { error: 'ID inválido.' };
-    dbUtils.updatePaymentStatus(id, 'approved');
-    return { success: true };
-  },
-  reject: async ({ params, locals }): Promise<{ success?: boolean; error?: string }> => {
-    if (!locals.user || !['admin', 'ultimate_admin'].includes(locals.user.type)) {
-      return { error: 'Acesso negado.' };
+    if (!id) {
+      console.log('[DEBUG] Invalid ID for action');
+      return { error: 'ID inválido.' };
     }
-    const id = Number(params.id);
-    if (!id) return { error: 'ID inválido.' };
-    dbUtils.updatePaymentStatus(id, 'rejected');
-    return { success: true };
+    if (action === 'approve') {
+      dbUtils.updatePaymentStatus(id, 'approved');
+      console.log('[DEBUG] Payment approved', { id });
+      return { success: true };
+    } else if (action === 'reject') {
+      dbUtils.updatePaymentStatus(id, 'rejected');
+      console.log('[DEBUG] Payment rejected', { id });
+      return { success: true };
+    } else {
+      console.log('[DEBUG] Unknown action', { action });
+      return { error: 'Ação desconhecida.' };
+    }
   }
 };
