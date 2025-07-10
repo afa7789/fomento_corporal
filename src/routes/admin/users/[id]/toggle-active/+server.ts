@@ -1,5 +1,6 @@
 import { dbUtils } from '$lib/db';
 import { json } from '@sveltejs/kit';
+import { logAction, logError } from '$lib/logger';
 
 export async function POST({ params, request }) {
     const { active } = await request.json();
@@ -8,8 +9,10 @@ export async function POST({ params, request }) {
 
     try {
         dbUtils.setUserActive(userId, active);
+        logAction('toggle_user_active', { userId, active });
         return json({ success: true });
     } catch (e) {
+        logError(e, { userId, active, route: 'admin/users/[id]/toggle-active' });
         return json({ error: 'Erro ao atualizar usuário' }, { status: 500 });
     }
 }
