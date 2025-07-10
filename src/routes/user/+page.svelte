@@ -17,6 +17,9 @@
     
     {#if user}
         <div class="welcome-card">
+            <div class="user-photo-block">
+              <img class="user-photo" src={user.photo_url || '/static/default-user.png'} alt="Foto do usuário" />
+            </div>
             <h2>BEM-VINDO, {user.name.toUpperCase()}</h2>
             <p>Tipo: <strong>USUÁRIO</strong></p>
         </div>
@@ -26,6 +29,7 @@
 <div class="user-actions">
   <a class="user-action-btn" href="/user/payments">Ver Pagamentos</a>
   <a class="user-action-btn" href="/user/payments/new">Novo Pagamento</a>
+  <a class="user-action-btn" href="/user/config">Configurações</a>
 </div>
 
 <div class="user-main">
@@ -194,4 +198,22 @@
     padding: 1rem 0.5rem;
   }
 }
+  .user-photo-block {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.7rem;
+  }
+  .user-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #207520;
+    background: #eee;
+  }
+  .user-email {
+    color: #888;
+    font-size: 0.97rem;
+    margin-bottom: 0.3rem;
+  }
 </style>
