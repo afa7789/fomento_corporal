@@ -1,10 +1,30 @@
+<script lang="ts">
+  export let data: { allowPublicTrainings?: boolean };
+</script>
+
 <div class="home-container">
   <h1>FOMENTO CORPORAL</h1>
 
+  {#if data.allowPublicTrainings}
+    <a href="/public-trainings" class="public-link">Ver treinos públicos</a>
+  {/if}
   <a href="/login" class="login-button">ENTRAR</a>
 </div>
 
 <style>
+  .public-link {
+    display: inline-block;
+    margin-bottom: 1.2rem;
+    border-radius: 6px;
+    padding: 0.7rem 1.2rem;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.1rem;
+    transition: background 0.2s, color 0.2s;
+  }
+  .public-link:hover {
+    color: #fff;
+  }
   .home-container {
     display: flex;
     flex-direction: column;

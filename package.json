@@ -11,7 +11,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test:db": "npx tsx scripts/test-db.ts",
-		"init:db": "node scripts/init-db.js"
+	"init:db": "node scripts/init-db.js",
+	"migrate": "tsx scripts/migrate.ts"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^6.0.0",

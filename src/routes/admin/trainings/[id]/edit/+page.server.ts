@@ -52,6 +52,8 @@ export const actions: Actions = {
     if (!training || !training.file_path) {
       return fail(404, { error: 'Treinamento não encontrado.' }) as any;
     }
+    // is_public
+    const is_public = data.get('is_public') === '1' ? 1 : 0;
     // Write file content to disk, always inside /uploads
     try {
       const { writeFileSync, existsSync, mkdirSync } = await import('fs');
@@ -63,14 +65,12 @@ export const actions: Actions = {
       const newPath = join(uploadsDir, fileName);
       writeFileSync(newPath, fileContent, 'utf-8');
       if (fileName !== training.file_path) {
-        dbUtils.updateTraining(id, name, fileName);
+        dbUtils.updateTraining(id, name, fileName, is_public);
+      } else {
+        dbUtils.updateTraining(id, name, null, is_public);
       }
     } catch (e) {
       return fail(500, { error: 'Erro ao salvar o arquivo.' }) as any;
-    }
-    // Update training name if changed
-    if (name !== training.name) {
-      dbUtils.updateTraining(id, name, null); // null = don't change file_path
     }
     // Atualizar permissões de acesso (FileAccess)
     // Limpar acessos antigos

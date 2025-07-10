@@ -59,6 +59,9 @@ bun test:db
 
 # TypeScript checking
 bun check
+
+# Migrate new DB changes
+bun migrate 
 ```
 
 ## Production Build

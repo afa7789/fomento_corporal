@@ -5,6 +5,7 @@
   let pix_key = '';
   let beneficiary_name = '';
   let beneficiary_city = '';
+  let allow_public_trainings = true;
   let success = false;
   let error = '';
   $: config = $page.data.config;
@@ -13,6 +14,7 @@
       pix_key = config.pix_key || '';
       beneficiary_name = config.beneficiary_name || '';
       beneficiary_city = config.beneficiary_city || '';
+      allow_public_trainings = config.allow_public_trainings !== undefined ? !!config.allow_public_trainings : true;
     }
   });
   async function saveConfig(e: SubmitEvent) {
@@ -23,6 +25,7 @@
     form.append('pix_key', pix_key);
     form.append('beneficiary_name', beneficiary_name);
     form.append('beneficiary_city', beneficiary_city);
+    form.append('allow_public_trainings', allow_public_trainings ? '1' : '0');
     const res = await fetch('', { method: 'POST', body: form });
     if (res.ok) {
       success = true;
@@ -50,6 +53,10 @@
     <label>
       Cidade
       <input bind:value={beneficiary_city} name="beneficiary_city" maxlength="15" required />
+    </label>
+    <label style="margin-top:1em;">
+      <input type="checkbox" bind:checked={allow_public_trainings} name="allow_public_trainings" />
+      Permitir treinos públicos
     </label>
     <button type="submit">Salvar</button>
     {#if success}

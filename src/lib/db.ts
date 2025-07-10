@@ -272,12 +272,22 @@ export const dbUtils = {
     },
     
     // Training operations
+
     createTraining: (name: string, filePath: string, createdBy: number): DatabaseResult => {
+        // Mantém compatibilidade
         const stmt = db.prepare(`
             INSERT INTO TrainingInfo (name, file_path, created_by) 
             VALUES (?, ?, ?)
         `);
         return stmt.run(name, filePath, createdBy) as DatabaseResult;
+    },
+
+    createTrainingWithPublic: (name: string, filePath: string, createdBy: number, isPublic: number): DatabaseResult => {
+        const stmt = db.prepare(`
+            INSERT INTO TrainingInfo (name, file_path, created_by, is_public)
+            VALUES (?, ?, ?, ?)
+        `);
+        return stmt.run(name, filePath, createdBy, isPublic) as DatabaseResult;
     },
     
     getTrainings: (): TrainingInfo[] => {
@@ -300,12 +310,16 @@ export const dbUtils = {
         return stmt.get(id) as TrainingInfo | undefined;
     },
     
-    updateTraining: (id: number, name: string, filePath: string | null): void => {
+    updateTraining: (id: number, name: string, filePath: string | null, isPublic?: number): void => {
         let sql = 'UPDATE TrainingInfo SET name = ?';
         const params: any[] = [name];
         if (filePath) {
             sql += ', file_path = ?';
             params.push(filePath);
+        }
+        if (typeof isPublic === 'number') {
+            sql += ', is_public = ?';
+            params.push(isPublic);
         }
         sql += ', updated_at = CURRENT_TIMESTAMP WHERE id = ?';
         params.push(id);

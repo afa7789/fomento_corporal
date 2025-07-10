@@ -20,6 +20,7 @@ export const actions: Actions = {
     const everyone = data.get('everyone');
     const groups = data.getAll('groups');
     const users = data.getAll('users');
+    const is_public = data.get('is_public') === '1' ? 1 : 0;
     if (!name || typeof name !== 'string' || name.trim().length < 3) {
       return fail(400, { error: 'Nome do treinamento inválido.' }) as any;
     }
@@ -35,7 +36,7 @@ export const actions: Actions = {
     const filePath = path.join(uploadsDir, fileName);
     await fs.writeFile(filePath, fileContent, 'utf-8');
     // Salvar treinamento
-    const result = dbUtils.createTraining(name, fileName, locals.user.id);
+    const result = dbUtils.createTrainingWithPublic(name, fileName, locals.user.id, is_public);
     const trainingId = result.lastInsertRowid;
     // Salvar acessos
     if (everyone) {

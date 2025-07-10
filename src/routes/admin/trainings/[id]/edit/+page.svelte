@@ -87,7 +87,11 @@
           {/each}
         </div>
       </label>
-      <small>Você pode combinar grupos, usuários e o acesso geral.</small>
+      <label style="display:block; margin-bottom:0.5rem;">
+        <input type="checkbox" name="is_public" value="1" checked={training?.is_public} />
+        <span>Treino público</span>
+      </label>
+      <small>Você pode combinar grupos, usuários, o acesso geral e marcar como público.</small>
     </fieldset>
     <br/>
     <button type="submit" disabled={submitting}>{submitting ? 'Salvando...' : 'Salvar'}</button>

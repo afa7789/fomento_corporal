@@ -37,6 +37,7 @@ export interface TrainingInfo {
     created_by: number;
     created_at: string;
     updated_at: string;
+    is_public?: boolean; // Indica se é público
     creator_name?: string; // From JOIN queries (updated from admin_name)
 }
 

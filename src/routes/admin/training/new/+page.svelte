@@ -25,7 +25,11 @@
       <legend>Compartilhamento</legend>
       <label class="brutalist-checkbox-label">
         <input type="checkbox" name="everyone" value="1" class="brutalist-checkbox" />
-        <span>Acessível a todos</span>
+        <span>Treino público</span>
+      </label>
+      <label class="brutalist-checkbox-label">
+        <input type="checkbox" name="everyone" value="1" class="brutalist-checkbox" />
+        <span>Acessível a todos usuários</span>
       </label>
       <label style="display:block; margin-bottom:0.1rem;">
         Grupos:<br/>
@@ -43,7 +47,7 @@
           {/each}
         </div>
       </label>
-      <small>Você pode combinar grupos, usuários e o acesso geral.</small>
+      <small>Você pode combinar grupos, usuários, o acesso geral e marcar como público.</small>
     </fieldset>
     <br/>
     <button type="submit">Salvar</button>
