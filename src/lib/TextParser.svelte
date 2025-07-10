@@ -4,6 +4,19 @@
   $: isEmpty = !textContent || !textContent.trim();
   $: parsed = parseText(textContent);
 
+  // Helper function to check if a string is a URL
+  function isLink(text) {
+    try {
+      new URL(text);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Define a unique key for the video URL within the first cell object
+  const VIDEO_URL_KEY = "videoHref";
+
   function parseText(text) {
     if (!text || typeof text !== 'string' || !text.trim()) {
       return { mode: 'empty' };
@@ -16,10 +29,9 @@
 
     function commitSection() {
       if (currentSection) {
-        // Ensure no empty bullets or tables are pushed
         if (currentSection.bullets.length > 0 || currentSection.table.length > 0) {
           sections.push(currentSection);
-        } else if (currentSection.header) { // Allow sections with just a header
+        } else if (currentSection.header) {
           sections.push(currentSection);
         }
         currentSection = null;
@@ -32,31 +44,24 @@
       const rawLine = lines[i];
       const line = rawLine.trim();
 
-      // If in plain mode, just collect all lines
       if (plainMode) {
-        sections.push({ mode: 'plain-line', content: rawLine }); // Store rawLine to preserve leading/trailing spaces for plain mode
+        sections.push({ mode: 'plain-line', content: rawLine });
         continue;
       }
 
-      // Check for empty lines to potentially signify end of a section's content
       if (line === '') {
         if (currentSection) {
-          // If we are in a section and encounter an empty line, commit the section
-          // and reset state to await-header for the next section.
           commitSection();
           state = 'await-header';
         }
-        continue; // Skip processing the empty line further
+        continue;
       }
 
       if (state === 'await-header') {
         if (line.includes(';')) {
-          // If the first non-empty line contains a semicolon, it's not a header.
-          // This implies the whole text should be plain.
           plainMode = true;
-          // Restart parsing in plain mode for all lines
-          sections = []; // Clear any partially parsed sections
-          for (let j = 0; j <= i; j++) { // Process current and previous lines in plain mode
+          sections = [];
+          for (let j = 0; j <= i; j++) {
             sections.push({ mode: 'plain-line', content: lines[j] });
           }
           continue;
@@ -68,11 +73,9 @@
 
       if (state === 'bullets-or-table') {
         if (line.includes(';')) {
-          // It's a table row
           state = 'table';
-          currentSection.table.push(line.split(';').map(cell => cell.trim()));
+          currentSection.table.push(processTableRowForVideo(line));
         } else {
-          // It's a bullet point
           currentSection.bullets.push(line);
         }
         continue;
@@ -80,10 +83,8 @@
 
       if (state === 'table') {
         if (line.includes(';')) {
-          currentSection.table.push(line.split(';').map(cell => cell.trim()));
+          currentSection.table.push(processTableRowForVideo(line));
         } else {
-          // If in table mode and a line without a semicolon appears,
-          // it signifies the end of the current table and the start of a new section.
           commitSection();
           currentSection = { header: line, bullets: [], table: [] };
           state = 'bullets-or-table';
@@ -91,17 +92,49 @@
       }
     }
 
-    commitSection(); // Commit the last section
+    commitSection();
 
-    // Final check for plain mode if no structured sections were formed.
     if (plainMode || sections.length === 0 || sections.every(s => s.mode === 'plain-line')) {
-        // If plainMode was activated, or no structured sections were successfully parsed,
-        // or all sections are already marked as plain-line, then return as full plain text.
         return {
             mode: 'plain',
             lines: lines.map(l => l)
         };
     }
+
+    function processTableRowForVideo(lineContent) {
+      const rawCells = lineContent.split(';').map(cell => cell.trim());
+      let videoLinkFound = null;
+      let finalCells = [];
+
+      for (let k = 0; k < rawCells.length; k++) {
+        if (isLink(rawCells[k])) {
+          videoLinkFound = rawCells[k];
+        } else {
+          finalCells.push(rawCells[k]);
+        }
+      }
+
+      if (videoLinkFound) {
+        if (finalCells.length === 0) {
+            finalCells.push('');
+        }
+        finalCells[0] = {
+            content: finalCells[0],
+            [VIDEO_URL_KEY]: videoLinkFound
+        };
+      }
+      return finalCells;
+    }
+
+    sections.forEach(section => {
+      if (section.table && section.table.length > 0) {
+        let maxCols = 0;
+        section.table.forEach(row => {
+          maxCols = Math.max(maxCols, row.length);
+        });
+        section.maxColumns = maxCols;
+      }
+    });
 
     return { mode: 'structured', sections };
   }
@@ -111,19 +144,37 @@
   /* Simple table cell border */
   table {
     border-collapse: collapse;
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
+    width: 100%;
   }
+
   td {
     border: 1px solid #ccc;
-    padding: 0.25em 0.5em;
+    padding: 0.18em 0.25em;
+    font-size: 0.98em;
+    vertical-align: top;
+    white-space: normal; /* Allow text to wrap by default */
   }
+
+  /* Standard link style for the video link */
+  .video-cell-link {
+    color: #0160cc; /* Standard blue link color */
+    text-decoration: none; /* No underline by default */
+  }
+
+  .video-cell-link:hover {
+    text-decoration: underline; /* Underline on hover */
+  }
+
   ul {
-    margin-bottom: 1em;
-  }
-  h1 {
-    margin-top: 1.5em;
     margin-bottom: 0.5em;
-    font-size: 1.3em;
+    padding-left: 1.1em;
+  }
+
+  h1 {
+    margin-top: 0.3em;
+    margin-bottom: 0.08em;
+    font-size: 1.05em;
   }
 </style>
 
@@ -132,31 +183,50 @@
 {:else if parsed.mode === 'plain'}
   {#each parsed.lines as line}
     {#if line.trim() === ''}
-      <p>&nbsp;</p>
+      <p> </p>
     {:else}
       <p>{line}</p>
     {/if}
   {/each}
 {:else if parsed.mode === 'structured'}
-  {#each parsed.sections as section}
-    <h1>{section.header}</h1>
-    {#if section.bullets.length}
-      <ul>
-        {#each section.bullets as bullet}
-          <li>{bullet}</li>
-        {/each}
-      </ul>
-    {/if}
-    {#if section.table.length}
-      <table>
-        {#each section.table as row}
-          <tr>
-            {#each row as cell}
-              <td>{cell}</td>
+  {#each parsed.sections as section, i (i)}
+    {#if section && Object.prototype.hasOwnProperty.call(section, 'header')}
+      <h1>{section.header}</h1>
+      {#if section.bullets && section.bullets.length}
+        <ul>
+          {#each section.bullets as bullet}
+            <li>{bullet}</li>
+          {/each}
+        </ul>
+      {/if}
+      {#if section.table && section.table.length}
+        <table>
+          <tbody>
+            {#each section.table as row}
+              <tr>
+                {#each row as cell, colIndex}
+                  {#if colIndex === 0 && typeof cell === 'object' && cell[VIDEO_URL_KEY]}
+                    <td>
+                      <a href={cell[VIDEO_URL_KEY]} target="_blank" rel="noopener noreferrer" class="video-cell-link">
+                        {cell.content}
+                      </a>
+                    </td>
+                  {:else}
+                    <td>{cell}</td>
+                  {/if}
+                {/each}
+                {#if section.maxColumns && row.length < section.maxColumns}
+                  {#each Array(section.maxColumns - row.length) as _, k}
+                    <td></td>
+                  {/each}
+                {/if}
+              </tr>
             {/each}
-          </tr>
-        {each}
-      </table>
+          </tbody>
+        </table>
+      {/if}
+    {:else if section && Object.prototype.hasOwnProperty.call(section, 'content')}
+      <p>{section.content}</p>
     {/if}
   {/each}
 {/if}

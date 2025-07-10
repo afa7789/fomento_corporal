@@ -28,10 +28,14 @@ min-height: 100vh;
   font-family: monospace;
   background: #000;
   color: #fff;
-  padding: 1em;
+  padding: 0.5em 0.5em;
   text-align: center;
-  font-size: 2rem;
-  margin: 0 0 2rem 0;
+  font-size: 1.5rem;
+  margin: 0 0 1.2rem 0;
+  max-width: 900px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 .brutalist-content {
   font-family: monospace;
