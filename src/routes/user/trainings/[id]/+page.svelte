@@ -1,10 +1,17 @@
+
 <script lang="ts">
+  // Import the TextParser component
+  import TextParser from '$lib/TextParser.svelte';
   export let data: { title: string; content: string };
 </script>
 
+
 <div class="training-page">
   <h1 class="brutalist-title">{data.title}</h1>
-  <pre class="brutalist-content">{data.content}</pre>
+  <!-- Use the TextParser component to render the content -->
+  <div class="brutalist-content">
+    <TextParser textContent={data.content} />
+  </div>
   <div>
     <br>
     <a href="/user" class="back-link">← Voltar ao dashboard</a>
