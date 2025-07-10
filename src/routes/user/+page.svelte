@@ -10,20 +10,18 @@
 <div class="user-container">
     <div class="user-header">
         <h1>DASHBOARD USUÁRIO</h1>
+        {#if user}
+          <p>BEM-VINDO, {user.name.toUpperCase()}</p>
+          <img class="user-photo" src={user.photo_url && user.photo_url.startsWith('/uploads/')
+    ? '/api' + user.photo_url
+    : (user.photo_url || '/static/default-user.png')} alt="Foto do usuário" />
+        {/if}
         <form method="POST" action="/logout" class="logout-form">
             <button type="submit" class="logout-btn">SAIR</button>
         </form>
     </div>
     
-    {#if user}
-        <div class="welcome-card">
-            <div class="user-photo-block">
-              <img class="user-photo" src={user.photo_url || '/static/default-user.png'} alt="Foto do usuário" />
-            </div>
-            <h2>BEM-VINDO, {user.name.toUpperCase()}</h2>
-            <p>Tipo: <strong>USUÁRIO</strong></p>
-        </div>
-    {/if}
+
 </div>
 
 <div class="user-actions">

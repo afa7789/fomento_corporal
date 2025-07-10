@@ -26,9 +26,12 @@ export const actions: Actions = {
       const buffer = Buffer.from(await photo.arrayBuffer());
       const ext = extname(photo.name) || '.jpg';
       const filename = `user_${locals.user.id}_${randomUUID()}${ext}`;
-      const dest = join('static/user-photos', filename);
+      const destDir = join('uploads', 'user-photos');
+      const dest = join(destDir, filename);
+      // Garante que a pasta existe
+      await import('fs/promises').then(fs => fs.mkdir(destDir, { recursive: true }));
       await writeFile(dest, buffer);
-      photo_url = `/user-photos/${filename}`;
+      photo_url = `/uploads/user-photos/${filename}`;
     }
 
     // Handle password change

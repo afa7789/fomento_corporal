@@ -36,6 +36,15 @@
     <ul class="user-list">
       {#each users as user}
         <li class="user-item">
+          <div class="user-list-photo-block">
+            {#if user.photo_url}
+              <img src={user.photo_url.startsWith('/uploads/')
+                ? '/api' + user.photo_url
+                : user.photo_url} alt="Foto de {user.name}" class="user-list-thumb" />
+            {:else}
+              <div class="user-list-thumb user-list-thumb-placeholder">👤</div>
+            {/if}
+          </div>
           <div><strong>{user.name}</strong></div>
           <div class="user-info">{user.username} &bull; {user.email}</div>
           <button
@@ -217,5 +226,30 @@
     font-size: 0.98rem;
     padding: 0.7rem;
   }
+}
+.user-list-photo-block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.3rem;
+}
+.user-list-thumb {
+  width: 38px;
+  height: 38px;
+  object-fit: cover;
+  border-radius: 50%;
+  background: #f2f2f2;
+  display: block;
+}
+.user-list-thumb-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4em;
+  color: #aaa;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #f2f2f2;
 }
 </style>
