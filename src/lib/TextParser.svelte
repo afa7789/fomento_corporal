@@ -163,6 +163,7 @@
   }
 
   .video-cell-link:hover {
+    background: none;
     text-decoration: underline; /* Underline on hover */
   }
 
