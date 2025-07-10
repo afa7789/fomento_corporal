@@ -1,9 +1,21 @@
 <script>
+  import { goto, invalidateAll } from '$app/navigation';
   export let data;
-  let users = data.users || [];
-  let search = data.search || '';
+  // Reativo: sempre sincroniza com os dados do servidor
   $: users = data.users || [];
   $: search = data.search || '';
+
+  async function handleSearch(e) {
+    e?.preventDefault?.();
+    const params = new URLSearchParams();
+    if (search.trim()) {
+      params.set('search', search.trim());
+    }
+    // Invalida todos os dados antes de navegar
+    await invalidateAll();
+    const url = `/admin/users${params.toString() ? '?' + params.toString() : ''}`;
+    await goto(url, { replaceState: false });
+  }
 </script>
 
 <div class="admin-dashboard">
@@ -11,11 +23,13 @@
   <a href="/admin" class="back-btn">← Voltar ao dashboard</a>
   <a href="/admin/users/new" class="add-btn">+ Novo Usuário</a>
   <a href="/admin/users/inactive" class="add-btn" style="background:#a00;color:#fff;">Usuários Desativados</a>
-  <form method="GET" class="search-form" use:enhance>
+  
+  <form method="GET" class="search-form" on:submit={handleSearch}>
     <label for="search" class="search-label">Buscar usuário, email ou nome:</label>
     <input id="search" type="text" name="search" placeholder="Digite para buscar..." bind:value={search} />
     <button type="submit">Buscar</button>
   </form>
+
   {#if users.length === 0}
     <p>Nenhum usuário encontrado.</p>
   {:else}

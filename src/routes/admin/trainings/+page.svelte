@@ -1,20 +1,45 @@
 <script>
+  import { goto, invalidateAll } from '$app/navigation';
+  import { page } from '$app/stores';
+  
   export let data;
-  const trainings = data.trainings || [];
-  let search = data.search || '';
+  
+  // Reativo: sempre sincroniza com os dados do servidor
+  $: trainings = data.trainings || [];
   $: search = data.search || '';
+
+  async function handleSearch(e) {
+    e?.preventDefault?.();
+    
+    const params = new URLSearchParams();
+    if (search.trim()) {
+      params.set('search', search.trim());
+    }
+    
+    const url = `/admin/trainings${params.toString() ? '?' + params.toString() : ''}`;
+    
+    // Invalida todos os dados antes de navegar
+    await invalidateAll();
+    await goto(url, { replaceState: false });
+  }
 </script>
-<script context="module">
-  import { enhance } from '$app/forms';
-</script>
+
 <div class="admin-dashboard">
   <h1>Lista de Treinamentos</h1>
   <a href="/admin" class="back-btn">← Voltar ao dashboard</a>
-  <form method="GET" class="search-form" use:enhance>
+  
+  <form method="GET" class="search-form" on:submit|preventDefault={handleSearch}>
     <label for="search" class="search-label">Buscar por nome, usuário, grupo ou "todos" (separe por vírgula):</label>
-    <input id="search" type="text" name="search" placeholder="Ex: arthur, premium, todos" bind:value={search} />
+    <input 
+      id="search" 
+      type="text" 
+      name="search" 
+      placeholder="Ex: arthur, premium, todos" 
+      bind:value={search} 
+    />
     <button type="submit">Buscar</button>
   </form>
+  
   {#if trainings.length === 0}
     <p>Nenhum treinamento cadastrado.</p>
   {:else}
@@ -30,7 +55,7 @@
               if (!confirm('Tem certeza que deseja excluir este treinamento?')) return;
               const res = await fetch(`/admin/trainings/${t.id}/delete`, { method: 'DELETE' });
               if (res.ok) {
-                window.location.reload();
+                await invalidateAll();
               } else {
                 alert('Erro ao excluir treinamento');
               }
@@ -100,40 +125,40 @@
 .delete-btn:hover {
   background: #d00;
 }
-  .search-form {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5em;
-    margin-bottom: 1.2em;
-    text-align: left;
-  }
-  .search-label {
-    font-size: 1em;
-    font-weight: 500;
-    margin-bottom: 0.2em;
-    color: #333;
-  }
-  .search-form input {
-    padding: 0.5em;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    font-size: 1em;
-    margin-bottom: 0.2em;
-  }
-  .search-form button {
-    padding: 0.5em 1em;
-    border-radius: 4px;
-    border: none;
-    background: #0066cc;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-    align-self: flex-start;
-  }
-  .search-form button:hover {
-    background: #004080;
-  }
+.search-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5em;
+  margin-bottom: 1.2em;
+  text-align: left;
+}
+.search-label {
+  font-size: 1em;
+  font-weight: 500;
+  margin-bottom: 0.2em;
+  color: #333;
+}
+.search-form input {
+  padding: 0.5em;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1em;
+  margin-bottom: 0.2em;
+}
+.search-form button {
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  border: none;
+  background: #0066cc;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  align-self: flex-start;
+}
+.search-form button:hover {
+  background: #004080;
+}
 @media (max-width: 600px) {
   .admin-dashboard {
     padding: 8px;

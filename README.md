@@ -1,38 +1,72 @@
-# sv
+Here's your updated README.md with **Bun** as the primary package manager and installation instructions:
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+```markdown
+# Personal Trainer Web Panel
 
-## Creating a project
+A mobile-first web application for personal trainers to manage clients, training files, and payments. Built with SvelteKit, SQLite, and vanilla CSS.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Features
 
+- User authentication (admin/user/ultimate admin roles)
+- Training file management
+- Payment processing with QR codes ( PIX ) without banks
+- Mobile-first responsive design
+
+## Technologies
+
+- SvelteKit
+- TypeScript
+- SQLite (better-sqlite3)
+- Vanilla CSS
+- Vite
+- Bun (JavaScript runtime & package manager)
+
+## Quick Start
+
+### 1. Install Bun
 ```bash
-# create a new project in the current directory
-npx sv create
+# On macOS/Linux
+curl -fsSL https://bun.sh/install | bash
 
-# create a new project in my-app
-npx sv create my-app
+# On Windows (via PowerShell)
+powershell -c "irm bun.sh/install.ps1|iex"
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
+### 2. Setup Project
 ```bash
-npm run dev
+# Clone repository
+git clone [your-repo-url]
+cd your-project
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+# Install dependencies (using Bun)
+bun install
+
+# Initialize database
+bun init:db
+
+# Copy .env.example to .env and configure
+cp .env.example .env
 ```
 
-## Building
-
-To create a production version of your app:
+## Development Commands
 
 ```bash
-npm run build
+# Start dev server (3x faster than npm)
+bun dev
+
+# Test database connection
+bun test:db
+
+# TypeScript checking
+bun check
 ```
 
-You can preview the production build with `npm run preview`.
+## Production Build
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```bash
+# Build for production
+bun build
+
+# Preview production build
+bun preview
+```

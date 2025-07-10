@@ -1,4 +1,5 @@
 <script>
+  import { goto, invalidateAll } from '$app/navigation';
   export let data;
   const payments = data.payments || [];
   let status = data.status || '';
@@ -9,12 +10,23 @@
   $: status = data.status || '';
   $: sort = data.sort || 'desc';
   $: search = data.search || '';
+
+  async function handleFilter(e) {
+    e?.preventDefault?.();
+    const params = new URLSearchParams();
+    if (search.trim()) params.set('search', search.trim());
+    if (status) params.set('status', status);
+    if (sort) params.set('sort', sort);
+    await invalidateAll();
+    const url = `/admin/payments${params.toString() ? '?' + params.toString() : ''}`;
+    await goto(url, { replaceState: false });
+  }
 </script>
 
 <div class="admin-dashboard">
   <h1>Pagamentos</h1>
   <a href="/admin" class="back-btn">← Voltar ao dashboard</a>
-  <form method="GET" class="filter-form" use:enhance>
+  <form method="GET" class="filter-form" on:submit={handleFilter}>
     <div class="filter-row-search">
       <input
         type="text"
