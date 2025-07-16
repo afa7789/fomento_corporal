@@ -24,7 +24,7 @@
     <fieldset class="brutalist-box">
       <legend>Compartilhamento</legend>
       <label class="brutalist-checkbox-label">
-        <input type="checkbox" name="everyone" value="1" class="brutalist-checkbox" />
+        <input type="checkbox" name="is_public" value="1" class="brutalist-checkbox" />
         <span>Treino público</span>
       </label>
       <label class="brutalist-checkbox-label">

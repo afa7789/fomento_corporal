@@ -66,12 +66,17 @@
       <textarea name="file_content" rows="10" placeholder="Cole aqui o conteúdo do arquivo" style="font-family:monospace; width:100%; resize:vertical;" bind:value={fileContent}></textarea>
     </label>
     <br/><br/>
-    <fieldset style="border:1px solid #ccc; border-radius:6px; padding:1rem;">
+    <fieldset class="brutalist-box">
       <legend>Compartilhamento</legend>
-      <label style="display:block; margin-bottom:0.5rem;">
-        <input type="checkbox" name="everyone" value="1" checked={accessEveryone} /> Acessível a todos
+      <label class="brutalist-checkbox-label">
+        <input type="checkbox" name="is_public" value="1"  checked={training?.is_public} class="brutalist-checkbox" />
+        <span>Treino público</span>
       </label>
-      <label style="display:block; margin-bottom:0.5rem;">
+      <label class="brutalist-checkbox-label">
+        <input type="checkbox" name="everyone" value="1" checked={accessEveryone} class="brutalist-checkbox" />
+        <span>Acessível a todos usuários</span>
+      </label>
+      <label style="display:block; margin-bottom:0.1rem;">
         Grupos:<br/>
         <div class="checkbox-list">
           {#each groups as group}
@@ -79,17 +84,13 @@
           {/each}
         </div>
       </label>
-      <label style="display:block; margin-bottom:0.5rem;">
+      <label style="display:block; margin-bottom:0.1rem;">
         Usuários:<br/>
         <div class="checkbox-list">
           {#each users as user}
             <label><input type="checkbox" name="users" value={user.id} checked={accessUsers.includes(user.id)}> {user.name} ({user.username})</label>
           {/each}
         </div>
-      </label>
-      <label style="display:block; margin-bottom:0.5rem;">
-        <input type="checkbox" name="is_public" value="1" checked={training?.is_public} />
-        <span>Treino público</span>
       </label>
       <small>Você pode combinar grupos, usuários, o acesso geral e marcar como público.</small>
     </fieldset>
@@ -160,6 +161,33 @@ button[type="submit"] {
 button[disabled] {
   background: #aaa;
   cursor: not-allowed;
+}
+.brutalist-box {
+  border: 2px solid #222;
+  border-radius: 10px;
+  background: #fff;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-family: 'IBM Plex Mono', 'Menlo', 'Monaco', monospace;
+  box-shadow: 4px 4px 0 #222;
+  text-align: left;
+}
+.brutalist-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  font-size: 1.1em;
+  font-family: inherit;
+  margin-bottom: 1.2em;
+  font-weight: bold;
+}
+.brutalist-checkbox {
+  width: 1.3em;
+  height: 1.3em;
+  accent-color: #222;
+  border: 2px solid #222;
+  border-radius: 4px;
+  margin-right: 0.5em;
 }
 .checkbox-list {
   display: flex;
