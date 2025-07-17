@@ -125,6 +125,26 @@
                 <button type="submit">RESETAR SENHA</button>
             </form>
         </div>
+        <div class="card">
+            <h3>RESET SENHA USUÁRIO</h3>
+            <form method="POST" action="?/reset_user_password">
+                <div class="form-group">
+                    <label for="reset_user">USUÁRIO:</label>
+                    <input 
+                        type="text" 
+                        id="reset_user" 
+                        name="reset_user" 
+                        required
+                        placeholder="Usuário do sistema"
+                    />
+                </div>
+                <div class="form-group">
+                    <label>SENHA NOVA:</label>
+                    <input type="text" value="123" readonly style="background:#eee;" />
+                </div>
+                <button type="submit">RESETAR SENHA</button>
+            </form>
+        </div>
     {/if}
 </div>
 

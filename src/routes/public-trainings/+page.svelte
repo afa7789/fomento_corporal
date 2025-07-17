@@ -3,6 +3,9 @@
 </script>
 
 <div class="public-trainings-page">
+  <div class="no-print back-link-container">
+    <a href="/" class="back-link">← Voltar</a>
+  </div>
   <h1>Treinos Públicos</h1>
   {#if data.trainings.length === 0}
     <div class="empty">Nenhum treino público disponível.</div>
@@ -60,6 +63,30 @@
   letter-spacing: 1px;
   transition: color 0.18s;
 }
+
+.back-link {
+  color: #888;
+  text-decoration: underline;
+  font-size: 0.97rem;
+  text-align:center;
+  cursor: pointer;
+  background: none;
+  border: none;
+  margin: 0 auto;
+  font-family: inherit;
+  transition: color 0.2s;
+  opacity: 0.7;
+}
+.back-link:hover {
+  color: #222;
+  opacity: 1;
+  text-decoration: underline;
+}
+ .back-link-container {
+   max-width: 900px;
+   margin: 2em auto 0 auto;
+   text-align: center;
+ }
 
 .empty {
   color: #888;
