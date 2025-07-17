@@ -8,8 +8,7 @@
   <div class="brutalist-content">
     <TextParser textContent={data.content} />
   </div>
-  <div>
-    <br>
+  <div class="no-print back-link-container">
     <a href="/public-trainings" class="back-link">← Voltar à lista de treinos públicos</a>
   </div>
 </div>
@@ -47,11 +46,11 @@
   color: #888;
   text-decoration: underline;
   font-size: 0.97rem;
-  text-align:left;
+  text-align:center;
   cursor: pointer;
   background: none;
   border: none;
-  margin: 20px;
+  margin: 0 auto;
   font-family: inherit;
   transition: color 0.2s;
   opacity: 0.7;
@@ -60,5 +59,22 @@
   color: #222;
   opacity: 1;
   text-decoration: underline;
+}
+ .back-link-container {
+   max-width: 900px;
+   margin: 2em auto 0 auto;
+   text-align: center;
+ }
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .training-page {
+    page-break-inside: avoid;
+    min-height: auto !important;
+  }
+  .brutalist-content {
+    page-break-inside: avoid;
+  }
 }
 </style>
